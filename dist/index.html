@@ -45,8 +45,11 @@
         >
           <a href="./index.html">😺 ADITYA JINDAL</a>
         </div>
+
         <ul class="hidden md:flex">
-          <li class="mx-[10px] cursor-pointer hidden lg:block"><a href="#about">About</a></li>
+          <li class="mx-[10px] cursor-pointer hidden lg:block">
+            <a href="#about">About</a>
+          </li>
           <li class="mx-[10px] cursor-pointer hidden lg:block">
             <a href="#projects">Projects</a>
           </li>
@@ -54,7 +57,11 @@
             <a href="./certifications.html">Certifications</a>
           </li>
           <li class="mx-[10px] cursor-pointer">
-            <a href="https://leetcode.com/adysleetcode/" target="_blank" class="flex">
+            <a
+              href="https://leetcode.com/adysleetcode/"
+              target="_blank"
+              class="flex"
+            >
               <iconify-icon
                 class="mt-1 mr-2"
                 icon="simple-icons:leetcode"
@@ -63,7 +70,11 @@
             </a>
           </li>
           <li class="mx-[10px] cursor-pointer">
-            <a href="https://www.github.com/adityaongit/" target="_blank" class="flex">
+            <a
+              href="https://www.github.com/adityaongit/"
+              target="_blank"
+              class="flex"
+            >
               <iconify-icon class="mt-1 mr-2" icon="bi:github"></iconify-icon>
               <div class="">GitHub</div>
             </a>
@@ -72,8 +83,58 @@
       </nav>
       <!-- End of Navbar -->
 
+      <!-- Navbar for small screens -->
+      <div class="md:hidden mt-5">
+        <div
+          class="pt-4 pb-2 grid gap-2 content-center grid-cols-3 sm:grid-cols-4"
+        >
+          <div class="mx-auto">
+            <span
+              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-[550px] text-gray-700 mr-2 mb-2"
+              ><a href="#projects">Projects</a></span
+            >
+          </div>
+          <div class="mx-auto">
+            <span
+              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-[550px] text-gray-700 mr-2 mb-2"
+              ><a
+                href="https://www.github.com/adityaongit/"
+                target="_blank"
+                class="flex"
+              >
+                <iconify-icon class="mt-1 mr-2" icon="bi:github"></iconify-icon>
+                <div class="mt-[1px]">GitHub</div>
+              </a></span
+            >
+          </div>
+          <div class="mx-auto">
+            <span
+              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-[550px] text-gray-700 mr-2 mb-2"
+              ><a href="./certifications.html">Certifications</a></span
+            >
+          </div>
+          <div class="col-span-3 mx-auto">
+            <span
+              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-[550px] text-gray-700 mr-2 mb-2"
+              ><a
+                href="https://leetcode.com/adysleetcode/"
+                target="_blank"
+                class="flex"
+              >
+                <iconify-icon
+                  class="mt-1 mr-2"
+                  icon="simple-icons:leetcode"
+                ></iconify-icon>
+                <div class="mt-[1.5px]">LeetCode</div>
+              </a></span
+            >
+          </div>
+        </div>
+      </div>
+      <!-- End of Navbar for small screens -->
+
       <!-- Hero Section -->
-      <div id="about" class="flex mt-10 md:mt-[100px]">
+      <div id="about" class="flex mt-5 sm:mt-10 md:mt-[100px]">
         <div class="text lg:w-4/5">
           <p class="font-bold text-4xl">
             Hello! I'm Aditya, a <span id="xoogler">Xoogler</span> with interest
@@ -850,7 +911,10 @@
               class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-6"
             >
               Built with Tailwind and 🖤 —
-              <a href="./index.html" class="text-gray-600 ml-1" rel="noopener noreferrer"
+              <a
+                href="./index.html"
+                class="text-gray-600 ml-1"
+                rel="noopener noreferrer"
                 >@adysfolio</a
               >
             </p>
