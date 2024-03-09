@@ -1,20 +1,22 @@
+import { Link } from "react-router-dom";
+
 const Header = () => {
     return (
         <>
             <nav className="pt-8 w-full h-14 flex pr-4 justify-between items-center">
                 <div className="mx-auto mt-5 sm:m-0 text-lg font-semibold text-gray-700 tracking-widest">
-                    <a href="./index.html">😺 ADITYA JINDAL</a>
+                    <Link to="/"> 😺 ADITYA JINDAL </Link>
                 </div>
 
                 <ul className="hidden sm:flex">
                     <li className="mx-[10px] cursor-pointer hidden lg:block">
-                        <a href="#about">About</a>
+                        <Link to="/about">About</Link>
                     </li>
                     <li className="mx-[10px] cursor-pointer hidden lg:block">
-                        <a href="#projects">Projects</a>
+                        <Link to="/projects">Projects</Link>
                     </li>
                     <li className="mx-[10px] cursor-pointer">
-                        <a href="./certifications.html">Certifications</a>
+                        <Link to="/certifications">Certifications</Link>
                     </li>
                     <li className="mx-[10px] cursor-pointer">
                         <a
@@ -52,13 +54,15 @@ const Header = () => {
                 <div className="pt-4 pb-2 flex flex-wrap content-center justify-center">
                     <div className="">
                         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-[550px] text-gray-700 mr-2 mb-2">
-                            <a href="#projects">Projects</a>
+                            <Link to="#projects">Projects</Link>
                         </span>
                     </div>
 
                     <div className="">
                         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-[550px] text-gray-700 mr-2 mb-2">
-                            <a href="./certifications.html">Certifications</a>
+                            <Link to="./certifications.html">
+                                Certifications
+                            </Link>
                         </span>
                     </div>
 
