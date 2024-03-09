@@ -1,8 +1,13 @@
 const ExperienceCard = ({ data }) => {
     console.log(data);
 
-    const URL = "https://adysfolio.onrender.com";
-    const companyLogo = data.companyLogo.data.attributes.formats.thumbnail.url;
+    const URL = "https://adysfolio.onrender.com/uploads/";
+
+    const imageHash = data.companyLogo?.data?.attributes?.hash;
+
+    const imageExt = data.companyLogo?.data?.attributes?.ext;
+
+    // console.log(companyLogo);
 
     const { companyName, startDate, endDate, Role, description, skillTag } =
         data;
@@ -31,7 +36,10 @@ const ExperienceCard = ({ data }) => {
     return (
         <div>
             <div className="intern1 shadow-md rounded-xl p-6 bg-gray-50">
-                <img className="h-32 mx-auto w-1/2" src={URL + companyLogo} />
+                <img
+                    className="mx-auto h-[100px]"
+                    src={URL + imageHash + imageExt}
+                />
 
                 <div className="my-auto mt-5">
                     <p className="font-semiboldld text-lg mt-4">
