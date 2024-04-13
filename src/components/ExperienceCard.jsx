@@ -37,7 +37,7 @@ const ExperienceCard = ({ data }) => {
         <div>
             <div className="intern1 shadow-md rounded-xl p-6 bg-gray-50">
                 <img
-                    className="mx-auto h-[100px]"
+                    className="mx-auto"
                     src={URL + imageHash + imageExt}
                 />
 
