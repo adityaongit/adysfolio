@@ -2,8 +2,8 @@ import React from "react";
 
 const Screen = ({ src }) => {
     return (
-        <div className="flex justify-center">
-            <div className="w-full transition rounded-lg shadow-xl hover:shadow-2xl">
+        <div className="flex justify-center border-2 border-slate-200 rounded-xl">
+            <div className="w-full  transition rounded-lg shadow-xl hover:shadow-2xl">
                 {/* Browser UI */}
                 <div className="flex items-center justify-between px-4 py-2 bg-gray-100 rounded-t-lg">
                     {/* Dots */}
@@ -19,7 +19,7 @@ const Screen = ({ src }) => {
                     <div className="flex-grow min-w-0 mx-2 bg-white rounded-md md:mx-4">
                         <input
                             type="text"
-                            className="w-full h-6 bg-gray-200 rounded-md text-center"
+                            className="w-full h-6 bg-gray-300 rounded-md text-center"
                             placeholder=""
                         />
                     </div>
@@ -47,7 +47,7 @@ const Screen = ({ src }) => {
                 <div className="relative overflow-hidden bg-white rounded-b-lg">
                     {/* Content */}
                     <img
-                        className="h-64 overflow-hidden items-center mx-auto"
+                        className="sm:h-32 w-full md:h-64 overflow-hidden items-center mx-auto"
                         src={src}
                         alt=""
                     />

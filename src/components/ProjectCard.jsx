@@ -1,26 +1,12 @@
 import Screen from "./Screen";
 
 const ProjectCard = ({ data }) => {
-    // Convert the object to an array of values
-    const dataArray = Object.values(data);
-
-    // Sort the data array based on the 'id' field
-    // const sortedData = dataArray.sort((a, b) => a[0] - b[0]);
-    console.log(dataArray[0]);
-    // console.log(sortedData)
-
     const { liveUrl, githubUrl } = data;
-
     const hrefValue = liveUrl ? liveUrl : githubUrl;
 
     return (
         <>
-            <div className="project1 shadow-md rounded-xl p-6 bg-gray-50">
-                {/* <img
-                    className="rounded-lg border border-gray-300 mx-auto"
-                    src={data.thumbnail}
-                    alt=""
-                /> */}
+            <div className="project1 shadow-md rounded-xl p-6 bg-gray-50 relative">
                 <Screen src={data.thumbnail} />
                 <p className="font-bold text-lg mt-4">{data.Title}</p>
                 <ul className="mt-2">
@@ -40,7 +26,7 @@ const ProjectCard = ({ data }) => {
                     ))}
                 </ul>
 
-                <div className="pt-4 pb-2">
+                <div className="pt-4 pb-10">
                     {data.skillTag.map((tag, index) => (
                         <span
                             key={index}
@@ -51,7 +37,7 @@ const ProjectCard = ({ data }) => {
                     ))}
                 </div>
 
-                <div className="mt-5">
+                <div className="absolute bottom-0 pb-6">
                     <a
                         className="text-gray-500 font-medium"
                         href={hrefValue}

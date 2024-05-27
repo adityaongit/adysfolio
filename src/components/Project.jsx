@@ -13,6 +13,7 @@ const Project = () => {
                     .from("projects")
                     .select("*")
                     .order("id", { ascending: true });
+                    
                 if (error) {
                     setError(error.message);
                 } else {
