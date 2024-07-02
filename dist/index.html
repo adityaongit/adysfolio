@@ -35,8 +35,8 @@
         <script type="module" src="script.js"></script>
         <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     </head>
-
-    <body class="sm:mx-26 mx-6 md:mx-24 lg:mx-[250px]">
+    <!-- sm:mx-26 mx-6 md:mx-24 lg:mx-[250px]  -->
+    <body class="mx-8 lg:max-w-6xl xl:mx-auto antialiased">
         <div class="wrap">
             <!-- Navbar -->
             <nav
@@ -149,7 +149,7 @@
                     <p class="font-bold text-4xl">
                         Hello! I'm Aditya, a
                         <span id="xoogler">Xoogler</span> with interest in Cloud
-                        and DevOps.
+                        and JavaScript.
                     </p>
                     <div class="mt-5 sm:pr-10">
                         <div class="text-base">
@@ -160,8 +160,8 @@
                         </div>
                         <div class="h-2"></div>
                         <div class="text-base">
-                            I was a Cloud Engineering Intern
-                            <span id="google">@Google</span> where I spent 3
+                            I was a Cloud Engineering Intern at
+                            <span id="google">Google</span> where I spent 3
                             months working on
                             <span id="tech1">Cloud Technologies</span> like
                             Kubernetes, Anthos, VPCs, Terraform (IaC) etc. My
@@ -213,7 +213,10 @@
                         </button>
                     </div>
                 </div>
-                <div class="image hidden lg:block lg:px-6 h-20" style="margin-top: -3.5rem;" >
+                <div
+                    class="image hidden lg:block lg:px-6 h-20"
+                    style="margin-top: -3.5rem"
+                >
                     <!-- <img class="w-80 shadow-2xl rounded-xl" src="./assets/pic.jpg" alt="" /> -->
                     <blockquote
                         class="instagram-media"
@@ -883,8 +886,8 @@
                                         d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
                                     />
                                 </svg>
-                                Implemented React Redux and Redux Toolkit for efficient state
-                                management.
+                                Implemented React Redux and Redux Toolkit for
+                                efficient state management.
                             </li>
                         </ul>
 
@@ -1474,6 +1477,21 @@
                 </footer>
             </div>
             <!-- End of Footer -->
+            <!-- Scroll-to-top button -->
+            <button
+                onclick="scrollToTop()"
+                id="scroll-to-top"
+                class="scroll-to-top fixed bottom-8 right-12 bg-gray-800 text-white rounded-full transition duration-300 hover:bg-gray-700 hover:text-gray-200 hidden lg:block"
+            >
+                <img
+                    src="https://media.geeksforgeeks.org/wp-content/uploads/20240227155250/up.png"
+                    class="w-10 h-10 rounded-full bg-white"
+                    alt=""
+                />
+            </button>
+
+            <!-- JavaScript to handle scrolling -->
+            <script src="moveToTop.js"></script>
         </div>
     </body>
 </html>
