@@ -44,14 +44,14 @@ export function Footer() {
             </div>
 
             {/* Center: Navigation */}
-            <nav className="flex flex-col gap-3 md:order-2 md:items-center">
+            <div className="flex flex-col gap-3 md:order-2 md:items-center">
               <span
-                className="text-xs font-mono uppercase tracking-widest text-muted-foreground"
+                className="text-xs font-mono uppercase tracking-widest text-muted-foreground md:self-start"
                 aria-hidden="true"
               >
                 Navigate
               </span>
-              <div className="flex flex-col gap-2">
+              <nav className="flex flex-col gap-2">
                 {footerNav.map(({ href, label }) => (
                   <Link
                     key={href}
@@ -61,8 +61,8 @@ export function Footer() {
                     {label}
                   </Link>
                 ))}
-              </div>
-            </nav>
+              </nav>
+            </div>
 
             {/* Right: Social + Theme Toggle */}
             <div className="flex flex-col gap-4 md:order-3 md:items-end">
