@@ -1,0 +1,258 @@
+---
+title: LLMs Will Not Return Clean JSON (And What to Do About It)
+description: Building ColdCraft's AI resume tailor taught me that structured output from LLMs is a reliability problem, not a prompt problem. Here's the extraction and validation layer that actually works.
+date: 2026-03-06
+tags:
+  - llm
+  - ai
+  - typescript
+  - backend
+  - open-source
+---
+
+import { TypographyMark } from "@/components/ui/typography";
+
+I was building an AI feature for ColdCraft — a cold outreach tool I'm working on — that takes a job description and rewrites your resume bullet points to match it. The LLM does the heavy lifting: read the job description, understand the role, rewrite bullets with relevant keywords, reorder skills by relevance.
+
+The feature worked. The problem was that it worked maybe 70% of the time.
+
+The other 30%, the LLM would return something like this:
+
+```
+Sure! Here's the rewritten resume tailored for the Senior Backend Engineer role:
+
+```json
+{
+  "companies": [
+    {
+      "company": "Acme Corp",
+      "bullets": ["Built distributed systems...", "Reduced latency by 40%..."]
+    }
+  ]
+}
+```
+
+Hope this helps!
+```
+
+There's a valid JSON object in there. It's wrapped in markdown code fences. There's a sentence before it and a helpful sign-off after it. `JSON.parse()` throws on all of it.
+
+This is the structured output problem: <TypographyMark>you can't reliably prompt your way to consistent JSON</TypographyMark>. You need a layer between the LLM and your application code that handles the mess.
+
+## Why Prompting Alone Doesn't Fix It
+
+The instinct is to add more instruction to your system prompt. "Return ONLY valid JSON. No markdown. No explanations. Just the JSON object." I tried this. It helps. It does not solve it.
+
+The issue is that LLMs are trained to be helpful and conversational. That training pulls against the instruction to be silent and machine-readable. The model has competing objectives, and sometimes the conversational one wins — especially on longer outputs, complex schemas, or when the model is uncertain about part of the response and wants to annotate it.
+
+OpenAI's structured output and Anthropic's tool-use features help significantly, but they're not universally available across providers, and they add latency and cost. If you're routing through OpenRouter to swap models, or using smaller/faster models, you don't always have access to constrained decoding.
+
+The practical answer is: assume the output is dirty, and write code that cleans it.
+
+## The Three-Layer Approach
+
+Before showing the extraction code, here's the architecture:
+
+<Mermaid code={`
+flowchart LR
+    A[LLM Response] --> B[Layer 1: Prompt<br/>Reduces dirty output probability]
+    B --> C[Layer 2: Extraction<br/>Strips markdown, finds JSON, matches brackets]
+    C --> D{Layer 3: Zod Validation}
+    D -->|Valid| E[Return Parsed Data]
+    D -->|Invalid| F[Retry or Fallback]
+    
+    style A fill:#e1f5ff,stroke:#0d47a1
+    style B fill:#fff3cd,stroke:#856404
+    style C fill:#d4edda,stroke:#155724
+    style D fill:#f8d7da,stroke:#721c24
+    style E fill:#d1ecf1,stroke:#0c5460
+    style F fill:#e2e3e5,stroke:#383d41
+`} />
+
+## The Extraction Layer
+
+Here's the function I built for ColdCraft's `llm.ts`:
+
+```typescript
+function extractJSON(text: string): string {
+  // Strip markdown code fences
+  let cleaned = text
+    .replace(/```json\s*/gi, "")
+    .replace(/```\s*/g, "")
+    .trim();
+
+  // Find the first JSON structure (object or array)
+  const objStart = cleaned.indexOf("{");
+  const arrStart = cleaned.indexOf("[");
+
+  if (objStart === -1 && arrStart === -1) return cleaned;
+
+  const start =
+    objStart === -1
+      ? arrStart
+      : arrStart === -1
+        ? objStart
+        : Math.min(objStart, arrStart);
+
+  const isArray = cleaned[start] === "[";
+  const openChar = isArray ? "[" : "{";
+  const closeChar = isArray ? "]" : "}";
+
+  // Walk character by character to find the matching close bracket
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = start; i < cleaned.length; i++) {
+    const char = cleaned[i];
+
+    if (escaped) { escaped = false; continue; }
+    if (char === "\\") { escaped = true; continue; }
+    if (char === '"') { inString = !inString; continue; }
+    if (inString) continue;
+
+    if (char === openChar) depth++;
+    else if (char === closeChar) {
+      depth--;
+      if (depth === 0) return cleaned.slice(start, i + 1);
+    }
+  }
+
+  return cleaned.slice(start);
+}
+```
+
+This does three things:
+
+1. **Strips markdown fences.** The most common failure mode — the model wraps the JSON in `` ```json `` blocks. A simple regex handles it.
+
+2. **Finds the actual JSON start.** Rather than trying to parse from the beginning of the string (which fails when there's leading prose), it scans for the first `{` or `[` and treats that as the start of the payload.
+
+3. **Matches brackets with a state machine.** Once we know where the JSON starts, we need to find where it ends. The naive approach — looking for the last `}` — breaks if the model added trailing prose after the closing bracket. The right approach is to track depth: increment on open brackets, decrement on close, stop at depth zero. The state machine handles string literals correctly by tracking whether we're inside quotes and whether the current character is escaped.
+
+The result is a string that's just the JSON, extracted cleanly from whatever the model returned.
+
+## Validation with Zod
+
+Extraction gives you a string you can parse. But a parseable string isn't necessarily a correct structure — the model might omit required fields, use wrong types, or invent keys that don't exist in your schema.
+
+This is where Zod earns its place. Every structured output call in ColdCraft goes through a schema:
+
+```typescript
+const RewrittenExperienceSchema = z.object({
+  companies: z.array(
+    z.object({
+      company: z.string(),
+      bullets: z.array(z.string()),
+    })
+  ),
+  reasoning: z.string().optional(),
+});
+```
+
+The full call looks like this:
+
+```typescript
+export async function createStructuredOutput<T extends z.ZodType>(
+  prompt: string,
+  schema: T,
+  options?: { model?: string; systemPrompt?: string }
+): Promise<z.infer<T>> {
+  const chat = getLLMClient(options?.model);
+
+  const messages = [
+    new SystemMessage(
+      `You are a helpful assistant that ONLY responds with valid JSON.
+Never include markdown code blocks, explanations, or any text outside the JSON.
+${options?.systemPrompt || ""}`
+    ),
+    new HumanMessage(prompt + "\n\nRespond with ONLY valid JSON, no other text."),
+  ];
+
+  const response = await chat.invoke(messages);
+  const content = response.content as string;
+
+  const jsonStr = extractJSON(content);
+  const parsed = JSON.parse(jsonStr);
+
+  return schema.parse(parsed);
+}
+```
+
+The system prompt still asks for clean JSON. The extraction handles the cases when it isn't. Zod validates the shape. Three layers, each catching a different failure mode:
+
+- **Prompt:** reduces the probability of dirty output
+- **Extraction:** recovers when the model wraps or annotates anyway
+- **Zod:** rejects structurally invalid responses early, before they corrupt your data
+
+## When Zod Throws
+
+Zod validation failure means the model returned structurally wrong output — missing a required field, wrong type somewhere, schema mismatch. At that point you have two options: retry or fall back.
+
+<Mermaid code={`
+flowchart TD
+    A[Zod Validation Failed] --> B{Feature Type?}
+    B -->|Best Effort| C[Graceful Fallback]
+    B -->|Critical Data| D[Retry with Backoff]
+    
+    C --> C1[Use Original/Default Data]
+    C1 --> C2[Resume Stays Usable]
+    
+    D --> D1[Wait: 2^n seconds]
+    D1 --> D2[Retry Extraction]
+    D2 --> D3{Success?}
+    D3 -->|Yes| E[Return Data]
+    D3 -->|No| F{Max Retries Reached?}
+    F -->|No| D1
+    F -->|Yes| G[Log Error & Fail]
+    
+    style A fill:#f8d7da,stroke:#721c24
+    style B fill:#fff3cd,stroke:#856404
+    style C fill:#d4edda,stroke:#155724
+    style D fill:#f8d7da,stroke:#721c24
+    style E fill:#d1ecf1,stroke:#0c5460
+    style G fill:#e2e3e5,stroke:#383d41
+`} />
+
+For ColdCraft's resume tailor, I chose a graceful fallback over a retry, because the feature is best-effort by design. If the LLM can't rewrite bullets cleanly, you get the original bullets back unchanged. The resume is still usable:
+
+For ColdCraft's resume tailor, I chose a graceful fallback over a retry, because the feature is best-effort by design. If the LLM can't rewrite bullets cleanly, you get the original bullets back unchanged. The resume is still usable:
+
+```typescript
+try {
+  const rewritten = await createStructuredOutput(prompt, RewrittenExperienceSchema);
+  for (const company of rewritten.companies) {
+    result.set(company.company, company.bullets);
+  }
+} catch (error) {
+  console.error("Failed to rewrite bullets:", error);
+  // Fall back to original — resume stays usable
+  for (const exp of experience) {
+    result.set(exp.company, exp.highlights || []);
+  }
+}
+```
+
+For features where accuracy matters more than graceful degradation — structured data extraction, classification, anything your application logic depends on — a retry with exponential backoff makes more sense.
+
+## The Model-Agnostic Layer
+
+One other thing worth noting: ColdCraft routes all LLM calls through OpenRouter using LangChain's `ChatOpenAI` pointed at a different base URL:
+
+```typescript
+return new ChatOpenAI({
+  model: modelName,
+  apiKey: process.env.OPENROUTER_API_KEY,
+  configuration: {
+    baseURL: "https://openrouter.ai/api/v1",
+  },
+});
+```
+
+This means the same `createStructuredOutput` function works with Haiku for fast/cheap calls and Sonnet for anything that needs more reasoning — just pass a different model name. <TypographyMark>The extraction and validation layer is model-agnostic by design</TypographyMark>, which matters when you're experimenting with which model is worth the cost for a given task.
+
+## What I'd Do Differently
+
+If I were starting over, I'd add one thing: structured logging on every extraction failure. Right now the `extractJSON` function either works or silently returns a malformed string that causes `JSON.parse` to throw downstream. Logging the raw model output alongside the extraction failure gives you the data to improve your prompts over time — you can look at what the model actually returned and tune accordingly.
+
+The extraction layer is a workaround for model behavior you can't fully control. Treating its failure cases as signal, not just errors, makes the whole system better over time.
