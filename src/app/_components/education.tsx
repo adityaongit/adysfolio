@@ -22,9 +22,12 @@ const baseHighlights: (string | ReactNode)[] = [
 ];
 
 const certHighlights = certifications.map((cert) => (
-  <Link key={cert.id} href={cert.url} className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
-    {cert.name} – {cert.issuer}, {cert.year}
-  </Link>
+  <>
+    <Link key={cert.id} href={cert.url} className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+      {cert.name}
+    </Link>
+    {" "}– {cert.issuer}, {cert.year}
+  </>
 ));
 
 const education = [
