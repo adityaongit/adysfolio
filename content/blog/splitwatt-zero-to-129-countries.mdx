@@ -1,0 +1,120 @@
+---
+title: "How SplitWatt Reached 129 Countries Without Spending a Rupee on Marketing"
+description: I built a tool to split my electricity bill. Nine thousand impressions and 129 countries later, here's what I learned about building something people actually search for.
+date: 2025-02-12
+tags:
+  - nextjs
+  - indie-hacking
+  - seo
+  - performance
+  - open-source
+---
+
+import { TypographyMark } from "@/components/ui/typography";
+
+The problem was simple: I live with roommates, and we have submeters. Every month, someone has to sit down with the meter readings, do the math, and figure out who owes what. Nobody wants to do it. Everyone agrees it should be automated. And yet, we kept doing it manually.
+
+I built SplitWatt to solve that. It's an open-source electricity bill splitter with submeter-based cost distribution and UPI payment integration. I expected maybe a dozen people to find it useful.
+
+It reached 129 countries. 9,000+ impressions. 5.5% click-through rate — about three times the industry average for organic search.
+
+I didn't run a single ad. I didn't post it on Product Hunt. I didn't DM anyone.
+
+Here's what actually happened, and what I think made the difference.
+
+## The Technical Foundation First
+
+Before any of the distribution story, there's a technical story. SplitWatt hit 100/100 Lighthouse across all four categories — Performance, Accessibility, Best Practices, and SEO. That's not decoration. It's a prerequisite for organic search to work the way I wanted.
+
+Getting there required being deliberate about a few things:
+
+**Bundle size.** Next.js App Router with careful import discipline. No barrel imports. Dynamic imports for anything not needed on the initial render. The result is a fast initial load even on slow connections — which matters a lot if you're reaching people in countries with variable network quality.
+
+**Security headers.** Strict CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy — all set via Next.js middleware. Google's Best Practices score dinged me on a missing header before I added them. Security headers as a Lighthouse optimization is an underrated tip.
+
+**Accessibility.** Proper ARIA labels, semantic HTML, keyboard navigation. This one's often treated as a checkbox item. It isn't — it's a real usability requirement, and it shows up in your Lighthouse score and in your SEO ranking.
+
+```typescript
+// next.config.ts — security headers
+const securityHeaders = [
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  {
+    key: "Content-Security-Policy",
+    value: buildCSP(), // function that assembles your CSP string
+  },
+];
+```
+
+**Core Web Vitals.** LCP under 1.5s, CLS at zero, FID minimal. These aren't just metrics — they're ranking signals. Optimizing for them genuinely correlates with better organic placement.
+
+## Why This Problem Is Searchable
+
+The insight I keep coming back to is that <TypographyMark>the best distribution channel for a utility tool is the search bar</TypographyMark>. People don't discover tools like SplitWatt through social media. They discover them when they have the problem and search for a solution.
+
+"electricity bill splitter" and its variants have consistent search volume. Not huge — it's a niche — but consistent, global, and with no dominant existing solution that's well-optimized. That's a gap worth filling.
+
+Reaching 129 countries isn't because electricity is exotic. It's because roommate cost-splitting is universal. The problem exists in Mumbai and Manchester and Manila and Montreal. If your tool solves it and is discoverable, geography becomes irrelevant.
+
+## The UPI Integration Decision
+
+UPI integration was a deliberate feature, not an afterthought. Most cost-splitting tools stop at "here's what you owe." SplitWatt closes the loop — after calculating splits, you can generate a UPI payment link directly.
+
+This was important for the Indian market specifically, where UPI is ubiquitous. It made the tool meaningfully more useful than an alternative that just shows a number. <TypographyMark>Closing the action loop — from calculation to payment — changes the tool from "useful to check" to "useful to use".</TypographyMark>
+
+A payment integration sounds complex, but UPI deep links follow a straightforward URI scheme:
+
+```typescript
+function generateUPILink(params: {
+  payeeVPA: string;
+  payeeName: string;
+  amount: number;
+  note: string;
+}): string {
+  const url = new URL("upi://pay");
+  url.searchParams.set("pa", params.payeeVPA);
+  url.searchParams.set("pn", params.payeeName);
+  url.searchParams.set("am", params.amount.toFixed(2));
+  url.searchParams.set("tn", params.note);
+  url.searchParams.set("cu", "INR");
+  return url.toString();
+}
+```
+
+Twenty lines of code that meaningfully differentiate the product. Small details like this compound.
+
+## What the 5.5% CTR Actually Means
+
+Industry average organic CTR for informational queries sits around 1.5–2%. SplitWatt was consistently hitting 5.5%. Why?
+
+Title tags and meta descriptions that match search intent precisely. When someone searches "electricity bill splitter between roommates," they see a result that says exactly that — not a generic "manage your bills" headline.
+
+This sounds obvious. It almost never happens in practice. Most tools write SEO copy for the product, not for the searcher's query. The searcher doesn't care what your product is called — they care whether it solves the specific thing they're looking for.
+
+Next.js metadata API makes this easy to get right:
+
+```typescript
+// app/layout.tsx
+export const metadata: Metadata = {
+  title: "SplitWatt — Electricity Bill Splitter for Roommates",
+  description:
+    "Split your electricity bill fairly using submeter readings. Free, open-source, and works with UPI payments.",
+  openGraph: {
+    title: "SplitWatt — Electricity Bill Splitter for Roommates",
+    description: "Fair electricity splitting based on actual submeter usage.",
+  },
+};
+```
+
+## What I'd Do Differently
+
+I should have added multi-currency support from day one. UPI is great for India, but "129 countries" includes a lot of people who don't use UPI. Adding other payment methods or at least currency-aware display would make the tool more useful globally.
+
+I'd also build in analytics earlier — not for the vanity metrics, but to understand which features people actually use. I added Umami later and it was immediately useful for understanding the usage patterns I couldn't see from impressions alone.
+
+The broader takeaway: <TypographyMark>if you build something that solves a specific, searchable problem well, the distribution mostly handles itself</TypographyMark>. The technical foundation — performance, SEO, security — is what earns the organic placement. The product quality is what earns the clicks.
+
+Build something people search for. Make sure they can find it. Make sure it works when they do.
+
+That's the whole playbook.

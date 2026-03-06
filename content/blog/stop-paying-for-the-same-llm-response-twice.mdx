@@ -1,0 +1,110 @@
+---
+title: Stop Paying for the Same LLM Response Twice
+description: LLM API calls are expensive. Some of them are the same call, made over and over. Here's how to fix that without breaking your application.
+date: 2025-06-10
+tags:
+  - llm
+  - langchain
+  - backend
+  - ai
+  - optimization
+---
+
+import { TypographyMark } from "@/components/ui/typography";
+
+Every LLM API call costs money. Some of them are expensive. And some of them are the exact same request, made over and over again, for the same input, returning the same output.
+
+That last category is just waste.
+
+When I was working on an AI-driven CX system at BrowserStack, we had multiple LLM agents running in parallel — RAG, diagnosis, query handling, evaluation. The system was resolving L2 support tickets automatically, which was great. But as traffic scaled, so did our API spend. I started digging into the call logs and noticed something obvious in hindsight: a large percentage of calls were semantically identical. Different users, same questions. Different sessions, same context.
+
+This is the caching problem for LLMs — and it's trickier than it sounds.
+
+## Why Standard Caching Doesn't Work Here
+
+If you've cached database queries or HTTP responses before, your first instinct might be to hash the prompt and store the result. Exact match caching. Simple, fast, effective.
+
+The problem is that LLM prompts are rarely byte-for-byte identical. Users phrase things differently. Templates render slightly differently based on context. Two prompts that mean the exact same thing might differ by a single word, and a hash-based cache returns a miss.
+
+```python
+# These are semantically identical. A hash cache misses the second one.
+prompt_1 = "Summarize the issue reported by the customer."
+prompt_2 = "Summarize the customer's reported issue."
+```
+
+You need a cache that understands *meaning*, not just bytes.
+
+## The Two-Layer Approach
+
+The solution we used was a two-layer cache built on LangChain's caching abstractions.
+
+**Layer 1: Exact match.** Fast, cheap, handles the easy cases — templated prompts where the input is genuinely identical. LangChain's `InMemoryCache` or a Redis-backed cache works fine here.
+
+**Layer 2: Semantic cache.** For everything else, embed the incoming prompt and do a nearest-neighbor lookup against previously cached embeddings. If the similarity is above a threshold, return the cached response instead of making a new API call.
+
+```python
+from langchain.cache import InMemoryCache
+from langchain_community.cache import RedisSemanticCache
+from langchain_openai import OpenAIEmbeddings
+import langchain
+
+# Layer 1: exact match in memory
+langchain.llm_cache = InMemoryCache()
+
+# Layer 2: semantic cache backed by a vector store
+semantic_cache = RedisSemanticCache(
+    redis_url="redis://localhost:6379",
+    embedding=OpenAIEmbeddings(),
+    score_threshold=0.95,  # tune this carefully
+)
+```
+
+The `score_threshold` is the most important parameter you'll tune. Too low and you'll return wrong cached responses for different questions. Too high and you'll miss most cache hits. For support ticket summarization, we found 0.92–0.95 worked well. For more open-ended tasks, you want to be more conservative.
+
+## What to Cache — and What Not To
+
+Not every LLM call is a good candidate for caching. Here's how I think about it:
+
+**Good candidates:**
+- Summarization tasks with stable input (ticket bodies, transcripts)
+- Classification prompts where categories don't change
+- Field extraction from structured documents
+- Any task where the output is deterministic given the input
+
+**Bad candidates:**
+- Prompts that include timestamps or session IDs in the context
+- Anything that should be fresh per-request by design (e.g., "what's happening right now")
+- Creative generation where variety is the point
+- Prompts where the system prompt changes frequently
+
+The worst thing you can do is cache a response that was correct yesterday but wrong today because the underlying context changed. <TypographyMark>Stale cache entries are harder to debug than slow responses.</TypographyMark>
+
+## Invalidation Strategy
+
+Cache invalidation is famously hard. For LLM caches specifically, I'd recommend:
+
+**TTL-based expiry** for most cases. Set a reasonable time-to-live based on how frequently the underlying information changes. For support tickets, hours to days is fine. For anything tied to live data, keep it short.
+
+**Explicit invalidation** when you know the context has changed. If a product is updated, if a model is swapped out, if system prompts are modified — invalidate relevant cache entries explicitly rather than waiting for TTLs to expire.
+
+```python
+# Invalidate all cache entries for a specific model version
+def invalidate_model_cache(model_name: str, redis_client):
+    keys = redis_client.scan_iter(f"langchain:llm:{model_name}:*")
+    for key in keys:
+        redis_client.delete(key)
+```
+
+## The Results
+
+After rolling this out on our frequently accessed support flows, the impact was meaningful: redundant API calls dropped significantly on high-traffic prompt patterns, and response latency improved for those cached paths since embedding lookup against Redis is orders of magnitude faster than an LLM roundtrip.
+
+The ROI compounds over time. The more traffic you have, the more cache hits you accumulate, the more you save.
+
+## One More Thing
+
+Don't cache at the application level and forget about it. Build in cache hit rate metrics from day one. If your hit rate is below 10%, your threshold is too strict or you're caching the wrong prompts. If it's above 60%, double-check you're not accidentally returning stale responses.
+
+Cache debugging is painful enough without flying blind on whether it's actually working.
+
+The general principle here extends beyond LLMs: <TypographyMark>if you're doing expensive work repeatedly for the same logical input, that's a signal, not an accident.</TypographyMark> Find the pattern and eliminate the waste.

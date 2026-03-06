@@ -1,0 +1,339 @@
+import { Section } from "@/components/layouts/page";
+import { JsonLd } from "@/components/shared/json-ld";
+import {
+  TypographyH1,
+  TypographyH2,
+  TypographyH3,
+  TypographyLead,
+  TypographyMuted,
+  TypographyMark,
+  TypographyP,
+  SectionLabel,
+} from "@/components/ui/typography";
+import { siteConfig } from "@/lib/config";
+import { buildMeta } from "@/lib/og";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = buildMeta({
+  title: "Privacy Policy",
+  pageTitle: "Privacy Policy",
+  description: `How ${siteConfig.name}'s website handles your data — what's collected, why, and how it's stored. Short version: not much, and nothing creepy.`,
+  path: "home / privacy-policy",
+  canonicalPath: "/privacy-policy",
+  type: "website",
+});
+
+const LAST_UPDATED = "March 4, 2026";
+
+export default function PrivacyPolicyPage() {
+  return (
+    <>
+      <JsonLd
+        type="webpage"
+        title="Privacy Policy"
+        description={`Privacy policy for ${siteConfig.domain} — data collected, stored, and why.`}
+        canonicalUrl={`${siteConfig.baseUrl}/privacy-policy`}
+      />
+
+      <Section variant="hero" aria-label="Privacy Policy">
+        <TypographyH1>Privacy Policy</TypographyH1>
+        <TypographyLead>
+          The short version:{" "}
+          <TypographyMark>
+            I collect very little, store it carefully, and never sell it.
+          </TypographyMark>{" "}
+          The long version follows.
+        </TypographyLead>
+        <TypographyMuted className="font-mono">
+          Last updated: {LAST_UPDATED}
+        </TypographyMuted>
+      </Section>
+
+      <Section aria-label="What this site is">
+        <div className="flex items-center gap-3 mb-10" aria-hidden="true">
+          <SectionLabel>What this site is</SectionLabel>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+        <div className="max-w-2xl">
+          <TypographyP>
+            This is a personal portfolio and blog at{" "}
+            <TypographyMark>{siteConfig.domain}</TypographyMark>. There&apos;s
+            no newsletter. The site has a{" "}
+            <TypographyMark>guestbook</TypographyMark> that requires signing in
+            via <TypographyMark>Clerk</TypographyMark> (GitHub, Google, or
+            email) to leave a message or like an entry. Everything else — blog
+            posts, projects, resume — is fully public and requires no account.
+          </TypographyP>
+        </div>
+      </Section>
+
+      <Section aria-label="What data is collected">
+        <div className="flex items-center gap-3 mb-10" aria-hidden="true">
+          <SectionLabel>What data is collected</SectionLabel>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+        <div className="max-w-2xl space-y-6">
+          <div className="space-y-2">
+            <TypographyH2>Blog read counts</TypographyH2>
+            <TypographyP>
+              When you visit a blog post, a{" "}
+              <TypographyMark>hashed</TypographyMark> version of your IP address
+              is stored alongside the post slug to count unique reads. The hash
+              is{" "}
+              <TypographyMark>
+                one-way (SHA-256 with a server-side salt)
+              </TypographyMark>{" "}
+              — your actual IP is <TypographyMark>never stored</TypographyMark>{" "}
+              and cannot be reverse-engineered from it.
+            </TypographyP>
+          </div>
+          <div className="space-y-2">
+            <TypographyH2>Reactions / mood votes</TypographyH2>
+            <TypographyP>
+              If you click one of the reaction buttons on a blog post, your
+              choice (one of: <em>Not for me, Meh, Liked it, Loved it</em>) is
+              stored with the same hashed IP + post slug pair. Reactions are{" "}
+              <TypographyMark>fully voluntary</TypographyMark> — if you
+              don&apos;t click anything,{" "}
+              <TypographyMark>nothing is stored</TypographyMark>.
+            </TypographyP>
+          </div>
+          <div className="space-y-2">
+            <TypographyH2>Guestbook entries &amp; likes</TypographyH2>
+            <TypographyP>
+              If you sign in and leave a guestbook message, the following is
+              stored in our database:{" "}
+              <TypographyMark>
+                your Clerk user ID, your message text, and a timestamp
+              </TypographyMark>
+              . If you like an entry, your Clerk user ID and the entry ID are
+              stored. Your{" "}
+              <TypographyMark>
+                name, username, and profile picture
+              </TypographyMark>{" "}
+              are fetched live from Clerk when rendering the guestbook — they
+              are not stored in our database. Both actions are{" "}
+              <TypographyMark>fully voluntary</TypographyMark> — if you
+              don&apos;t sign in, nothing is stored.
+            </TypographyP>
+          </div>
+          <div className="space-y-2">
+            <TypographyH3>What is NOT collected</TypographyH3>
+            <TypographyP>
+              No browser fingerprinting. No tracking pixels.{" "}
+              <TypographyMark>No third-party ad networks.</TypographyMark> No
+              email addresses or passwords are stored in this site&apos;s own
+              database — authentication is fully delegated to{" "}
+              <TypographyMark>Clerk</TypographyMark> (see Third-party services
+              below). If you never sign in to the guestbook, no personally
+              identifiable information about you is stored anywhere by this
+              site.
+            </TypographyP>
+          </div>
+        </div>
+      </Section>
+
+      <Section aria-label="Where data is stored">
+        <div className="flex items-center gap-3 mb-10" aria-hidden="true">
+          <SectionLabel>Where data is stored</SectionLabel>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+        <div className="max-w-2xl space-y-4">
+          <TypographyP>
+            Read counts and reactions are stored in a PostgreSQL database hosted
+            on{" "}
+            <a
+              href="https://neon.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-foreground transition-colors"
+            >
+              Neon
+            </a>
+            . These records contain no personal information — only post slugs,
+            IP hashes, moods, and timestamps.
+          </TypographyP>
+          <TypographyP>
+            Guestbook entries and likes are stored in the same Neon PostgreSQL
+            database. These records contain your{" "}
+            <TypographyMark>Clerk user ID</TypographyMark>, message text, and
+            timestamps. Your Clerk user ID is an opaque identifier assigned by
+            Clerk — it is not your email, name, or any human-readable detail.
+            Your profile information (name, username, avatar) is stored and
+            managed by{" "}
+            <a
+              href="https://clerk.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-foreground transition-colors"
+            >
+              Clerk
+            </a>
+            , not in our database.
+          </TypographyP>
+        </div>
+      </Section>
+
+      <Section aria-label="Analytics">
+        <div className="flex items-center gap-3 mb-10" aria-hidden="true">
+          <SectionLabel>Analytics</SectionLabel>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+        <div className="max-w-2xl">
+          <TypographyP>
+            This site uses{" "}
+            <a
+              href="https://umami.is"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-foreground transition-colors"
+            >
+              Umami Analytics
+            </a>{" "}
+            — a <TypographyMark>privacy-focused, open-source</TypographyMark>{" "}
+            analytics tool hosted on{" "}
+            <a
+              href="https://umami.is/docs/cloud"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-foreground transition-colors"
+            >
+              Umami Cloud
+            </a>
+            . Umami does <TypographyMark>not use cookies</TypographyMark>, does
+            not collect personal data, and complies with{" "}
+            <TypographyMark>GDPR, CCPA, and PECR</TypographyMark>. Only
+            anonymized, aggregated page view data is recorded — no IP addresses,
+            no fingerprinting, no cross-site tracking.
+          </TypographyP>
+        </div>
+      </Section>
+
+      <Section aria-label="Third-party services">
+        <div className="flex items-center gap-3 mb-10" aria-hidden="true">
+          <SectionLabel>Third-party services</SectionLabel>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+        <div className="max-w-2xl space-y-6">
+          <div className="space-y-2">
+            <TypographyH2>Spotify</TypographyH2>
+            <TypographyP>
+              The footer displays what I&apos;m currently listening to (or last
+              listened to) via the{" "}
+              <a
+                href="https://developer.spotify.com/documentation/web-api"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 hover:text-foreground transition-colors"
+              >
+                Spotify Web API
+              </a>
+              . This is a{" "}
+              <TypographyMark>read-only, server-side</TypographyMark> call using
+              my own account credentials — no data about you is sent to Spotify.
+              The currently playing track is cached for{" "}
+              <TypographyMark>60 seconds</TypographyMark> on the server; no
+              Spotify data is stored in the database.
+            </TypographyP>
+          </div>
+          <div className="space-y-2">
+            <TypographyH2>Clerk (Authentication)</TypographyH2>
+            <TypographyP>
+              Sign-in for the guestbook is handled by{" "}
+              <a
+                href="https://clerk.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 hover:text-foreground transition-colors"
+              >
+                Clerk
+              </a>
+              . When you sign in, Clerk collects and stores your{" "}
+              <TypographyMark>
+                name, email address, username, and profile picture
+              </TypographyMark>{" "}
+              depending on the OAuth provider you use (GitHub, Google, etc.).
+              This data is stored on Clerk&apos;s infrastructure and is subject
+              to{" "}
+              <a
+                href="https://clerk.com/legal/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 hover:text-foreground transition-colors"
+              >
+                Clerk&apos;s Privacy Policy
+              </a>
+              . This site only stores the opaque Clerk user ID in its own
+              database. Clerk uses{" "}
+              <TypographyMark>session cookies</TypographyMark> to maintain your
+              signed-in state — these are set only when you sign in to the
+              guestbook.
+            </TypographyP>
+          </div>
+          <div className="space-y-2">
+            <TypographyH2>Google Fonts &amp; GitHub</TypographyH2>
+            <TypographyP>
+              This site uses Google Fonts (loaded via CSS, subject to{" "}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 hover:text-foreground transition-colors"
+              >
+                Google&apos;s Privacy Policy
+              </a>
+              ). The resume is fetched from a GitHub Releases URL. Neither
+              integration passes any data about you back to this site.
+            </TypographyP>
+          </div>
+        </div>
+      </Section>
+
+      <Section aria-label="Your rights">
+        <div className="flex items-center gap-3 mb-10" aria-hidden="true">
+          <SectionLabel>Your rights</SectionLabel>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+        <div className="max-w-2xl space-y-4">
+          <TypographyP>
+            If you have never signed in to the guestbook, the only data stored
+            is an <TypographyMark>irreversible IP hash</TypographyMark> — there
+            is no practical way to identify or retrieve those records.
+          </TypographyP>
+          <TypographyP>
+            If you have signed in and left a guestbook message or liked an
+            entry, you can request deletion of your guestbook data by emailing{" "}
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="underline underline-offset-4 hover:text-foreground transition-colors"
+            >
+              {siteConfig.email}
+            </a>
+            . To delete your Clerk account and the profile data Clerk holds
+            (name, email, avatar), you can do so directly through the{" "}
+            <TypographyMark>guestbook sign-in page</TypographyMark> or by
+            contacting me at the email above. Depending on your jurisdiction,
+            you may have rights to access, correct, or erase your personal data
+            under laws such as <TypographyMark>GDPR (EU)</TypographyMark> or{" "}
+            <TypographyMark>CCPA (California)</TypographyMark>.
+          </TypographyP>
+        </div>
+      </Section>
+
+      <Section aria-label="Changes to this policy">
+        <div className="flex items-center gap-3 mb-10" aria-hidden="true">
+          <SectionLabel>Changes to this policy</SectionLabel>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+        <div className="max-w-2xl">
+          <TypographyP>
+            If anything meaningful changes (like adding analytics), this page
+            will be updated and the{" "}
+            <TypographyMark>&ldquo;Last updated&rdquo;</TypographyMark> date
+            will reflect it. No surprise privacy pivots here.
+          </TypographyP>
+        </div>
+      </Section>
+    </>
+  );
+}

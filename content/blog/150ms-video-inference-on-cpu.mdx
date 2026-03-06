@@ -1,0 +1,130 @@
+---
+title: "150ms on CPU: How I Built Soteira's Real-Time Video Inference Pipeline"
+description: Everyone said I needed a GPU. I shipped 150ms real-time video inference on CPU anyway — here's the 4-gate pipeline architecture that made it possible.
+date: 2025-04-20
+tags:
+  - ml
+  - computer-vision
+  - python
+  - yolo
+  - performance
+---
+
+import { TypographyMark } from "@/components/ui/typography";
+
+When I started building Soteira, the assumption from most people I talked to was: *you need a GPU for anything real-time with ML*.
+
+That's true if you're running large models, doing batch inference, or handling high-resolution inputs at scale. But for a focused single-stream use case — watching a video feed and answering natural-language questions about what's happening — it turns out you can get to sub-200ms latency on CPU if you're deliberate about what you run and when.
+
+Soteira does this with a 4-gate pipeline. Let me walk through how it works.
+
+## The Problem With Naive Video Inference
+
+The obvious approach to "analyze what's in this video" is to run your model on every frame. Extract, infer, respond. Simple pipeline.
+
+The problem is that most frames are boring. Nothing changed. The person is still sitting there. The object is still in the corner. Running full inference on frames where nothing meaningful happened is the most expensive version of doing nothing.
+
+<TypographyMark>Real-time inference is fundamentally a filtering problem before it's a prediction problem.</TypographyMark> The goal is to spend compute only on frames where something worth analyzing is actually happening.
+
+That's the insight behind the 4-gate pipeline.
+
+## Gate 1: Motion Detection
+
+The first gate is cheap and runs on every frame: OpenCV-based background subtraction with frame differencing.
+
+```python
+def motion_gate(prev_frame, curr_frame, threshold=25):
+    diff = cv2.absdiff(prev_frame, curr_frame)
+    gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+    _, mask = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
+    motion_score = np.sum(mask) / mask.size
+    return motion_score > MOTION_THRESHOLD
+```
+
+This is running at frame rate on grayscale diffs — negligible CPU cost, maybe 1–2ms per frame. If no significant motion is detected, the frame never reaches gate 2.
+
+In a typical talking-head video call or security feed, 60–80% of frames get filtered out here. This alone cuts your downstream compute dramatically.
+
+## Gate 2: Scene Change Detection
+
+Motion tells you *something* changed. Scene change detection tells you whether the change is significant enough to warrant re-analysis of the full scene.
+
+We use histogram comparison between frames. If the color distribution shifts significantly, that's a scene change — new content, new context, worth running the heavier models.
+
+```python
+def scene_change_gate(prev_frame, curr_frame):
+    hist_prev = cv2.calcHist([prev_frame], [0, 1, 2], None,
+                              [8, 8, 8], [0, 256, 0, 256, 0, 256])
+    hist_curr = cv2.calcHist([curr_frame], [0, 1, 2], None,
+                              [8, 8, 8], [0, 256, 0, 256, 0, 256])
+    score = cv2.compareHist(hist_prev, hist_curr, cv2.HISTCMP_CORREL)
+    return score < SCENE_SIMILARITY_THRESHOLD
+```
+
+Gate 2 is still fast — histogram computation on 8-bin channels is microseconds. Combined with gate 1, most frames never see a neural network.
+
+## Gate 3: Object Entry Detection with YOLO-nano
+
+Gates 1 and 2 are heuristic. Gate 3 is where actual ML runs — but only on frames that survived the first two filters.
+
+The model choice here was deliberate. YOLOv8n (nano) is the smallest variant in the v8 family, optimized specifically for CPU inference. On a modern CPU, it runs in 20–40ms per frame. That's fast enough to be useful in a real-time pipeline without requiring hardware acceleration.
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("yolov8n.pt")
+
+def object_entry_gate(frame, prev_detections):
+    results = model(frame, verbose=False)
+    current_objects = extract_object_ids(results)
+    new_objects = current_objects - prev_detections
+    return len(new_objects) > 0, current_objects
+```
+
+Gate 3 triggers when a new object type enters the scene — a person walks in, a phone appears, a document is held up. These are the events that are most likely to be semantically relevant to a natural language query.
+
+## Gate 4: NLP Query Matching
+
+The final gate runs only when the upstream filters agree: motion detected, scene changed, new objects present. At this point we have a frame worth analyzing and we run it against the active query.
+
+The query matching uses a visual-language model to answer the user's prompt against the current frame context. This is the most expensive operation in the pipeline, but because gates 1–3 have filtered aggressively, it runs far less often than you'd expect.
+
+```python
+def nlp_gate(frame, query: str, context: dict) -> str:
+    # Visual description of detected objects + scene
+    visual_context = build_visual_context(frame, context["detections"])
+
+    prompt = f"""
+    Scene: {visual_context}
+    Query: {query}
+
+    Answer the query based on what is visible in the scene.
+    Be specific and concise.
+    """
+    return llm.invoke(prompt)
+```
+
+## The 150ms Number
+
+End-to-end latency from frame capture to response breaks down roughly as:
+
+| Stage | Latency |
+|---|---|
+| Frame capture + preprocessing | ~5ms |
+| Gate 1: Motion detection | ~2ms |
+| Gate 2: Scene change | ~3ms |
+| Gate 3: YOLO-nano inference | ~30ms |
+| Gate 4: NLP response | ~100ms |
+| **Total (triggered path)** | **~140ms** |
+
+Most frames never hit gate 4. For frames that do, you're at ~140ms — which I'm comfortable calling ~150ms given variance.
+
+The NLP response time is the ceiling here, and it's driven by the model you choose for gate 4. Smaller, faster models push this lower; larger models push it higher. For most use cases, a 7B parameter model running locally or a fast API call to a smaller hosted model keeps you well under 200ms.
+
+## What I'd Do Differently
+
+The gate thresholds are the hardest part to tune. Too sensitive and you run gate 4 constantly. Too conservative and you miss events. <TypographyMark>There's no universal answer — the right thresholds depend entirely on your input video characteristics.</TypographyMark> Build an evaluation harness early and test against representative clips.
+
+I'd also explore async gate 3. YOLO-nano inference is fast but it's still synchronous in this implementation. Running it in a thread pool and buffering gate-4 invocations would smooth out latency spikes on busy scenes.
+
+The broader lesson: when everyone tells you a thing requires hardware you don't have, it's worth asking whether the problem is actually the problem — or whether you're solving the expensive version of it when a cheaper version exists.
