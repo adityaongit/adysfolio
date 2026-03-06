@@ -28,9 +28,7 @@ interface RoughDiagramProps {
 }
 
 const ROUGHNESS = 1.4;
-const STROKE_W = 1.5;
-const HACHURE_GAP = 8;
-const HACHURE_ANGLE = -41;
+const STROKE_W = 1.8;
 const FONT_SIZE = 13;
 const CHAR_W = 7.5;     // approx px per character at font-size 13
 const PAD_X = 28;
@@ -38,38 +36,38 @@ const PAD_Y = 16;
 const MIN_W = 110;
 const DIAMOND_EXTRA = 44; // diamonds need more room for the slanted sides
 
-// Per-color palette — hachure color visible against the bg tint, per theme
+// Per-color palette — solid fill + sketch border per theme
 const PALETTE: Record<NodeColor, {
-  light: { bg: string; hachure: string; stroke: string };
-  dark:  { bg: string; hachure: string; stroke: string };
+  light: { fill: string; stroke: string };
+  dark:  { fill: string; stroke: string };
 }> = {
   default: {
-    light: { bg: '#f5f5f8', hachure: '#a0a0c0', stroke: '#26263a' },
-    dark:  { bg: '#26263a', hachure: '#6060a0', stroke: '#c9c9dc' },
+    light: { fill: '#f0f0f5', stroke: '#4a4a6a' },
+    dark:  { fill: '#2e2e45', stroke: '#9090b8' },
   },
   blue: {
-    light: { bg: '#eff6ff', hachure: '#60a5fa', stroke: '#1d4ed8' },
-    dark:  { bg: '#1e3a5f', hachure: '#93c5fd', stroke: '#60a5fa' },
+    light: { fill: '#dbeafe', stroke: '#2563eb' },
+    dark:  { fill: '#1e3a5f', stroke: '#60a5fa' },
   },
   green: {
-    light: { bg: '#f0fdf4', hachure: '#4ade80', stroke: '#15803d' },
-    dark:  { bg: '#14532d', hachure: '#86efac', stroke: '#4ade80' },
+    light: { fill: '#dcfce7', stroke: '#16a34a' },
+    dark:  { fill: '#14532d', stroke: '#4ade80' },
   },
   red: {
-    light: { bg: '#fef2f2', hachure: '#f87171', stroke: '#b91c1c' },
-    dark:  { bg: '#450a0a', hachure: '#fca5a5', stroke: '#f87171' },
+    light: { fill: '#fee2e2', stroke: '#dc2626' },
+    dark:  { fill: '#450a0a', stroke: '#f87171' },
   },
   yellow: {
-    light: { bg: '#fefce8', hachure: '#facc15', stroke: '#a16207' },
-    dark:  { bg: '#422006', hachure: '#fde047', stroke: '#facc15' },
+    light: { fill: '#fef9c3', stroke: '#ca8a04' },
+    dark:  { fill: '#422006', stroke: '#fde047' },
   },
   purple: {
-    light: { bg: '#faf5ff', hachure: '#c084fc', stroke: '#7e22ce' },
-    dark:  { bg: '#3b0764', hachure: '#d8b4fe', stroke: '#c084fc' },
+    light: { fill: '#f3e8ff', stroke: '#9333ea' },
+    dark:  { fill: '#3b0764', stroke: '#d8b4fe' },
   },
   orange: {
-    light: { bg: '#fff7ed', hachure: '#fb923c', stroke: '#c2410c' },
-    dark:  { bg: '#431407', hachure: '#fdba74', stroke: '#fb923c' },
+    light: { fill: '#ffedd5', stroke: '#ea580c' },
+    dark:  { fill: '#431407', stroke: '#fdba74' },
   },
 };
 
@@ -172,11 +170,9 @@ export function RoughDiagram({ nodes, edges, direction = 'TB' }: RoughDiagramPro
     const rc = rough.svg(svg);
 
     const baseShapeOpts = {
-      roughness:    ROUGHNESS,
-      strokeWidth:  STROKE_W,
-      fillStyle:    'hachure' as const,
-      hachureAngle: HACHURE_ANGLE,
-      hachureGap:   HACHURE_GAP,
+      roughness:  ROUGHNESS,
+      strokeWidth: STROKE_W,
+      fillStyle:  'solid' as const,
     };
 
     // --- Edges (drawn first so they sit behind nodes) ---
@@ -228,22 +224,14 @@ export function RoughDiagram({ nodes, edges, direction = 'TB' }: RoughDiagramPro
       const shapeOpts = {
         ...baseShapeOpts,
         stroke: colors.stroke,
-        fill:   colors.hachure,
+        fill:   colors.fill,
       };
 
       if (shape === 'diamond') {
         const hw = nw / 2, hh = nh / 2;
         const pts: [number, number][] = [[x, y - hh], [x + hw, y], [x, y + hh], [x - hw, y]];
-        // flat bg tint behind the rough sketch
-        const bgPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-        bgPoly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
-        bgPoly.setAttribute('fill', colors.bg);
-        bgPoly.setAttribute('stroke', 'none');
-        svg.appendChild(bgPoly);
         svg.appendChild(rc.polygon(pts, shapeOpts));
       } else {
-        // flat bg tint behind the rough sketch
-        svg.appendChild(svgRect(x - nw / 2, y - nh / 2, nw, nh, colors.bg));
         svg.appendChild(rc.rectangle(x - nw / 2, y - nh / 2, nw, nh, shapeOpts));
       }
 
