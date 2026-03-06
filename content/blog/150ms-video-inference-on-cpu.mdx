@@ -1,6 +1,6 @@
 ---
 title: "150ms on CPU: How I Built Soteira's Real-Time Video Inference Pipeline"
-description: Everyone said I needed a GPU. I shipped 150ms real-time video inference on CPU anyway — here's the 4-gate pipeline architecture that made it possible.
+description: Everyone said I needed a GPU. I shipped 150ms real-time video inference on CPU anyway — here's the 3-gate pipeline architecture that made it possible.
 date: 2025-04-20
 tags:
   - ml
@@ -16,7 +16,27 @@ When I started building Soteira, the assumption from most people I talked to was
 
 That's true if you're running large models, doing batch inference, or handling high-resolution inputs at scale. But for a focused single-stream use case — watching a video feed and answering natural-language questions about what's happening — it turns out you can get to sub-200ms latency on CPU if you're deliberate about what you run and when.
 
-Soteira does this with a 4-gate pipeline. Let me walk through how it works.
+Soteira does this with a 3-gate pipeline optimized for Apple Silicon M2. Let me walk through how it works.
+
+<Mermaid code={`
+flowchart TD
+    A[Video Input<br/>Webcam/RTSP/File] --> B[Gate 1: Motion Detection<br/>MOG2 Background Subtraction<br/>~5ms per frame]
+    B -->|Motion Detected| C[Gate 2: Scene Change<br/>HSV Histogram + SSIM<br/>~3ms]
+    B -->|No Motion| Z[Frame Discarded]
+    C -->|Scene Changed OR Motion Spike| D[Gate 3: Object Detection<br/>YOLOv5n + IOU Tracking<br/>8-15ms]
+    C -->|No Significant Change| Z
+    D -->|New Object Confirmed| E[Queue for LLM<br/>Background Thread]
+    D -->|No New Objects| Z
+    E --> F[LLM Analysis<br/>~100ms async]
+    
+    style A fill:#e1f5ff,stroke:#0d47a1
+    style B fill:#fff3cd,stroke:#856404
+    style C fill:#d4edda,stroke:#155724
+    style D fill:#f8d7da,stroke:#721c24
+    style E fill:#d1ecf1,stroke:#0c5460
+    style F fill:#e2e3e5,stroke:#383d41
+    style Z fill:#f8f9fa,stroke:#6c757d,stroke-dasharray: 5 5
+`} />
 
 ## The Problem With Naive Video Inference
 
@@ -26,105 +46,193 @@ The problem is that most frames are boring. Nothing changed. The person is still
 
 <TypographyMark>Real-time inference is fundamentally a filtering problem before it's a prediction problem.</TypographyMark> The goal is to spend compute only on frames where something worth analyzing is actually happening.
 
-That's the insight behind the 4-gate pipeline.
+That's the insight behind the 3-gate pipeline.
 
-## Gate 1: Motion Detection
+## Gate 1: Motion Detection with MOG2
 
-The first gate is cheap and runs on every frame: OpenCV-based background subtraction with frame differencing.
+The first gate is cheap and runs on every frame: MOG2 (Mixture of Gaussians) background subtraction, which is much more sophisticated than simple frame differencing.
 
 ```python
-def motion_gate(prev_frame, curr_frame, threshold=25):
-    diff = cv2.absdiff(prev_frame, curr_frame)
-    gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-    _, mask = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
-    motion_score = np.sum(mask) / mask.size
-    return motion_score > MOTION_THRESHOLD
+from cv2 import createBackgroundSubtractorMOG2, getStructuringElement, erode, dilate
+
+class MotionGate:
+    def __init__(self, threshold=0.02):
+        self.threshold = threshold
+        self.bg_subtractor = createBackgroundSubtractorMOG2(
+            history=300,
+            varThreshold=16,
+            detectShadows=False
+        )
+        self.erode_kernel = getStructuringElement(1, (3, 3))
+        self.dilate_kernel = getStructuringElement(1, (5, 5))
+    
+    def apply_motion(self, frame_bgr):
+        fg_mask = self.bg_subtractor.apply(frame_bgr)
+        cleaned = erode(fg_mask, self.erode_kernel, iterations=1)
+        cleaned = dilate(cleaned, self.dilate_kernel, iterations=1)
+        total_pixels = cleaned.shape[0] * cleaned.shape[1]
+        foreground_pixels = countNonZero(cleaned)
+        changed_ratio = foreground_pixels / total_pixels
+        return changed_ratio, cleaned
 ```
 
-This is running at frame rate on grayscale diffs — negligible CPU cost, maybe 1–2ms per frame. If no significant motion is detected, the frame never reaches gate 2.
+MOG2 models the background as a mixture of Gaussian distributions, handling gradual lighting changes and repetitive motion better than simple diff. Shadows are disabled for speed (`detectShadows=False`), and morphological cleanup (3×3 erode → 5×5 dilate) removes noise while connecting nearby motion regions. This runs at ~5ms per frame at 360p on CPU. If no significant motion is detected, the frame never reaches gate 2.
 
-In a typical talking-head video call or security feed, 60–80% of frames get filtered out here. This alone cuts your downstream compute dramatically.
+In a typical talking-head video call or security feed, 60–80% of frames get filtered out here.
 
 ## Gate 2: Scene Change Detection
 
 Motion tells you *something* changed. Scene change detection tells you whether the change is significant enough to warrant re-analysis of the full scene.
 
-We use histogram comparison between frames. If the color distribution shifts significantly, that's a scene change — new content, new context, worth running the heavier models.
+We use two complementary methods: HSV histogram comparison and SSIM (Structural Similarity Index). Either one can trigger the gate.
 
 ```python
-def scene_change_gate(prev_frame, curr_frame):
-    hist_prev = cv2.calcHist([prev_frame], [0, 1, 2], None,
-                              [8, 8, 8], [0, 256, 0, 256, 0, 256])
-    hist_curr = cv2.calcHist([curr_frame], [0, 1, 2], None,
-                              [8, 8, 8], [0, 256, 0, 256, 0, 256])
-    score = cv2.compareHist(hist_prev, hist_curr, cv2.HISTCMP_CORREL)
-    return score < SCENE_SIMILARITY_THRESHOLD
+def hsv_hist_small(self, img_bgr):
+    hsv = cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+    hist = calcHist([hsv], [0, 1], None, [32, 32], [0, 180, 0, 256])
+    hist_norm = hist / (hist.sum() + 1e-7)
+    return hist_norm.flatten()
+
+def ssim_gray(self, img1, img2):
+    C1 = (0.01 * 255) ** 2
+    C2 = (0.03 * 255) ** 2
+    mu1 = convolve2d(img1, self.ssim_kernel, mode='valid', boundary='symm')
+    mu2 = convolve2d(img2, self.ssim_kernel, mode='valid', boundary='symm')
+    sigma1_sq = convolve2d(img1 ** 2, self.ssim_kernel, mode='valid', boundary='symm') - mu1 ** 2
+    sigma2_sq = convolve2d(img2 ** 2, self.ssim_kernel, mode='valid', boundary='symm') - mu2 ** 2
+    sigma12 = convolve2d(img1 * img2, self.ssim_kernel, mode='valid', boundary='symm') - mu1 * mu2
+    numerator = (2 * mu1 * mu2 + C1) * (2 * sigma12 + C2)
+    denominator = (mu1 ** 2 + mu2 ** 2 + C1) * (sigma1_sq + sigma2_sq + C2)
+    return mean(numerator / (denominator + 1e-7))
+
+def check_scene_change(self, curr_small):
+    curr_hist = self.hsv_hist_small(curr_small)
+    curr_gray = cvtColor(curr_small, cv2.COLOR_BGR2GRAY)
+    cosine_sim = dot(curr_hist, self.s_ref_hist) / (norm(curr_hist) * norm(self.s_ref_hist))
+    d_hist = 1.0 - cosine_sim
+    ssim_val = self.ssim_gray(curr_gray, self.s_ref_gray)
+    hist_change = d_hist > self.hist_threshold
+    ssim_change = ssim_val < self.ssim_threshold
+    return hist_change or ssim_change, d_hist, ssim_val
 ```
 
-Gate 2 is still fast — histogram computation on 8-bin channels is microseconds. Combined with gate 1, most frames never see a neural network.
+Gate 2 runs only on frames with motion detected (plus throttling to max 10 FPS). The dual-check OR logic prevents missing events, while adaptive throttling (up to 500ms interval when no changes detected) saves compute on static scenes. The SSIM implementation uses a custom 11×11 Gaussian kernel with σ=1.5, avoiding external dependencies.
 
-## Gate 3: Object Entry Detection with YOLO-nano
+## Gate 3: Object Entry Detection with YOLOv5n + IOU Tracking
 
-Gates 1 and 2 are heuristic. Gate 3 is where actual ML runs — but only on frames that survived the first two filters.
+Gates 1 and 2 are heuristic. Gate 3 is where actual ML runs — but only on frames that survived the first two filters, and even then, it runs on a stride (every 4th frame by default, or triggered by motion spikes/scene changes).
 
-The model choice here was deliberate. YOLOv8n (nano) is the smallest variant in the v8 family, optimized specifically for CPU inference. On a modern CPU, it runs in 20–40ms per frame. That's fast enough to be useful in a real-time pipeline without requiring hardware acceleration.
+The model choice was deliberate: YOLOv5n (nano) is 40% faster than YOLOv8n. On an M2 with MPS acceleration, it runs in 8–15ms per frame.
 
 ```python
 from ultralytics import YOLO
 
-model = YOLO("yolov8n.pt")
+class ObjectGate:
+    def __init__(self, device="cpu", confirm_hits=2, imgsz=416, conf=0.4, iou=0.7):
+        self.model = YOLO('yolov5nu.pt')
+        self.tracker = IOUTracker(iou_threshold=0.5, confirm_hits=confirm_hits)
+        self.imgsz = imgsz
+        self.conf = conf
+        self.iou = iou
+    
+    def _filter_detections(self, results, frame_shape):
+        detections = []
+        frame_area = frame_shape[0] * frame_shape[1]
+        for i in range(len(results[0].boxes)):
+            box = results[0].boxes.xyxy[i].cpu().numpy()
+            conf = float(results[0].boxes.conf[i].cpu().numpy())
+            area = (box[2] - box[0]) * (box[3] - box[1])
+            if area < frame_area * 0.01 or conf < self.conf:
+                continue
+            detections.append({'box': box.tolist(), 'conf': conf})
+        return detections
 
-def object_entry_gate(frame, prev_detections):
-    results = model(frame, verbose=False)
-    current_objects = extract_object_ids(results)
-    new_objects = current_objects - prev_detections
-    return len(new_objects) > 0, current_objects
+class IOUTracker:
+    def iou(self, box1, box2):
+        x1 = max(box1[0], box2[0])
+        y1 = max(box1[1], box2[1])
+        x2 = min(box1[2], box2[2])
+        y2 = min(box1[3], box2[3])
+        if x2 <= x1 or y2 <= y1:
+            return 0.0
+        intersection = (x2 - x1) * (y2 - y1)
+        union = (box1[2] - box1[0]) * (box1[3] - box1[1]) + \
+                (box2[2] - box2[0]) * (box2[3] - box2[1]) - intersection
+        return intersection / (union + 1e-7)
+    
+    def update(self, detections):
+        new_tracks = []
+        for det in detections:
+            best_track = max(self.tracks, key=lambda t: self.iou(det['box'], t.box), default=None)
+            if best_track and self.iou(det['box'], best_track.box) > self.iou_threshold:
+                best_track.hits += 1
+                if best_track.hits >= self.confirm_hits and not best_track.confirmed:
+                    best_track.confirmed = True
+                    new_tracks.append(best_track)
+            else:
+                self.tracks.append(Track(det['box'], hits=1))
+        return new_tracks
 ```
 
-Gate 3 triggers when a new object type enters the scene — a person walks in, a phone appears, a document is held up. These are the events that are most likely to be semantically relevant to a natural language query.
+Gate 3 uses IOU-based tracking to distinguish between camera movement (same objects, different positions) and actual new objects entering the scene. It requires 2 consecutive detections before confirming an object is real, filtering out transient false positives. Detection boxes smaller than 1% of frame area are ignored to reduce noise.
 
-## Gate 4: NLP Query Matching
-
-The final gate runs only when the upstream filters agree: motion detected, scene changed, new objects present. At this point we have a frame worth analyzing and we run it against the active query.
-
-The query matching uses a visual-language model to answer the user's prompt against the current frame context. This is the most expensive operation in the pipeline, but because gates 1–3 have filtered aggressively, it runs far less often than you'd expect.
-
-```python
-def nlp_gate(frame, query: str, context: dict) -> str:
-    # Visual description of detected objects + scene
-    visual_context = build_visual_context(frame, context["detections"])
-
-    prompt = f"""
-    Scene: {visual_context}
-    Query: {query}
-
-    Answer the query based on what is visible in the scene.
-    Be specific and concise.
-    """
-    return llm.invoke(prompt)
-```
+When new objects are confirmed, frames are saved and queued for LLM processing in a background thread — non-blocking, so the pipeline never stalls.
 
 ## The 150ms Number
 
 End-to-end latency from frame capture to response breaks down roughly as:
 
+<Mermaid code={`
+gantt
+    title Frame Processing Latency Breakdown (Triggered Path)
+    dateFormat s
+    axisFormat %Lms
+
+    section Frame Processing
+    Capture + Preprocessing     :0, 5
+    Gate 1: Motion (MOG2)     :5, 10
+    Gate 2: Scene Change        :10, 13
+    Gate 3: YOLOv5n (MPS)    :13, 28
+    Queue Frame                 :28, 28
+    
+    section Async Processing
+    LLM Analysis (Background)    :28, 128
+    
+    section Total
+    Total Latency               :128, 128
+`} />
+
+The latency table summarizes it:
+
 | Stage | Latency |
 |---|---|
 | Frame capture + preprocessing | ~5ms |
-| Gate 1: Motion detection | ~2ms |
-| Gate 2: Scene change | ~3ms |
-| Gate 3: YOLO-nano inference | ~30ms |
-| Gate 4: NLP response | ~100ms |
-| **Total (triggered path)** | **~140ms** |
+| Gate 1: Motion detection (MOG2) | ~5ms |
+| Gate 2: Scene change (HSV + SSIM) | ~3ms |
+| Gate 3: YOLO-nano inference (MPS) | ~8–15ms |
+| Gate 4: LLM processing (background) | ~100ms |
+| **Total (triggered path)** | **~120–130ms** |
 
-Most frames never hit gate 4. For frames that do, you're at ~140ms — which I'm comfortable calling ~150ms given variance.
+Most frames never hit gate 3 or 4. For frames that do, you're at ~120-130ms — which I'm comfortable calling ~150ms given variance and CPU fallback scenarios.
 
-The NLP response time is the ceiling here, and it's driven by the model you choose for gate 4. Smaller, faster models push this lower; larger models push it higher. For most use cases, a 7B parameter model running locally or a fast API call to a smaller hosted model keeps you well under 200ms.
+The LLM processing uses a multi-threaded, non-blocking architecture with 4 parallel workers. Frames are queued with fast similarity deduplication (8×8 downsampling) to avoid sending nearly-identical images to the API. The pipeline continues streaming without waiting for responses, which is key to real-time performance.
+
+## What Makes This Different
+
+Unlike naive approaches that run models on every frame, Soteira uses adaptive detection cadence:
+
+- **Motion gate**: Every single frame (~5ms at 360p)
+- **Scene gate**: On motion + every 2s safeguard
+- **Object gate**: Every 4th frame OR motion spikes OR scene changes
+
+This means the expensive YOLO inference runs significantly less often than frame rate. On a static scene, it might not run for minutes. On an active scene, it runs on stride.
+
+The system also supports RTSP streams, video file processing (with speed control for testing at 10x real-time), and comprehensive logging with CSV event logs and frame saving.
 
 ## What I'd Do Differently
 
-The gate thresholds are the hardest part to tune. Too sensitive and you run gate 4 constantly. Too conservative and you miss events. <TypographyMark>There's no universal answer — the right thresholds depend entirely on your input video characteristics.</TypographyMark> Build an evaluation harness early and test against representative clips.
+The gate thresholds are the hardest part to tune. Too sensitive and you run the LLM constantly. Too conservative and you miss events. <TypographyMark>There's no universal answer — the right thresholds depend entirely on your input video characteristics.</TypographyMark> I built a video streaming mode that lets you test with pre-recorded content at controlled speeds, which made tuning much easier.
 
-I'd also explore async gate 3. YOLO-nano inference is fast but it's still synchronous in this implementation. Running it in a thread pool and buffering gate-4 invocations would smooth out latency spikes on busy scenes.
+I'd also explore running gate 3 on a separate thread entirely. Currently it's synchronous in the main loop, and even at 8–15ms, occasional spikes on busy scenes can cause frame drops. A dedicated YOLO thread with frame buffering would smooth this out.
 
-The broader lesson: when everyone tells you a thing requires hardware you don't have, it's worth asking whether the problem is actually the problem — or whether you're solving the expensive version of it when a cheaper version exists.
+The broader lesson: when everyone tells you a thing requires hardware you don't have, it's worth asking whether the problem is actually the problem — or whether you're solving the expensive version of it when a cheaper, smarter version exists.

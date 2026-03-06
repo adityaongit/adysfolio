@@ -36,7 +36,7 @@ function getTargetOffsetMinutes(timezone: string, now: Date): number {
 }
 
 export function LocationTag({
-  city = "Mangalore",
+  city = "Mumbai",
   country = "India",
   timezone = "Asia/Kolkata",
 }: LocationTagProps) {

@@ -5,7 +5,6 @@ import {
   ButtonGroup,
   ButtonGroupSeparator,
 } from "@/components/ui/button-group";
-import { Badge } from "@/components/ui/badge";
 import { Section, Card } from "@/components/layouts/page";
 import { siteConfig } from "@/lib/config";
 import {
@@ -16,7 +15,6 @@ import {
   SectionLabel,
 } from "@/components/ui/typography";
 import { LocationTag } from "@/components/ui/location";
-import { IconCircleFilled } from "@tabler/icons-react";
 
 export function Hero() {
   return (
@@ -27,20 +25,6 @@ export function Hero() {
       </div>
 
       <div className="w-full max-w-5xl flex flex-col gap-6">
-        {siteConfig.availableForHire && (
-          <Badge
-            variant="outline"
-            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs self-start"
-            aria-label="Currently available for hire"
-          >
-            <IconCircleFilled
-              className="size-2 fill-green-500 text-green-500 animate-pulse"
-              aria-hidden="true"
-            />
-            Available for hire
-          </Badge>
-        )}
-
         <Card className="@sm:p-8 flex flex-col gap-8 bg-background/80 backdrop-blur-md">
           <div className="space-y-4">
             <TypographyH1>{siteConfig.name}</TypographyH1>

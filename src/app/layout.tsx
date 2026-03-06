@@ -59,9 +59,8 @@ export default function Layout({ children }: LayoutProps<"/">) {
       <body className="relative flex flex-col min-h-screen">
         {process.env.NODE_ENV === "production" && (
           <Script
-            src="/stats/script.js"
-            data-website-id="bd850c68-5e13-4ae7-bfb6-58d4a8134f4e"
-            data-host-url="/stats"
+            src="https://cloud.umami.is/script.js"
+            data-website-id="dc8cb931-4a46-46d8-bf57-d3ddcd53fcdc"
             strategy="afterInteractive"
           />
         )}

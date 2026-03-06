@@ -1,8 +1,8 @@
+import { BlogsCta } from "@/app/_components/blogs-cta";
 import { Contact } from "@/app/_components/contact";
-import { Ecosystem } from "@/app/_components/ecosystem";
+import { Experience } from "@/app/_components/experience";
 import { Hero } from "@/app/_components/hero";
 import { BuiltThings } from "@/app/_components/projects";
-import { RulesIFollow } from "@/app/_components/rules";
 import { JsonLd } from "@/components/shared/json-ld";
 import { siteConfig } from "@/lib/config";
 import { buildMeta } from "@/lib/og";
@@ -27,9 +27,9 @@ export default function Page() {
         canonicalUrl={`${siteConfig.baseUrl}`}
       />
       <Hero />
-      <RulesIFollow />
+      <Experience />
       <BuiltThings />
-      <Ecosystem />
+      <BlogsCta />
       <Contact />
     </>
   );

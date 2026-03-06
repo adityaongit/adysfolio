@@ -36,8 +36,8 @@ export function Contact() {
               </TypographyH2>
 
               <TypographyLead>
-                If you're working on something ambitious and need a frontend
-                engineer who prefers{" "}
+                If you're working on something ambitious and need an engineer
+                who builds with{" "}
                 <TypographyMark>clarity over chaos</TypographyMark>, we'll
                 probably get along.
               </TypographyLead>

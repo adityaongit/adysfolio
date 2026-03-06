@@ -11,7 +11,6 @@ import Link from "next/link";
 
 const footerNav = [
   ...siteConfig.nav,
-  { href: "/branding", label: "Branding" },
   { href: "/privacy-policy", label: "Privacy Policy" },
 ];
 
