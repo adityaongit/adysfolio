@@ -59,7 +59,7 @@ export function Education() {
               <DecorIcon position="bottom-left" />
               <DecorIcon position="bottom-right" />
               <div className="py-6 space-y-4">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center justify-between gap-4">
                   <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                     <span className="font-semibold text-base text-foreground">
                       {edu.institution}
@@ -67,15 +67,24 @@ export function Education() {
                     <TypographyMuted className="text-sm font-normal">
                       {edu.degree}
                     </TypographyMuted>
+                  </div>
+                  <div className="hidden sm:flex flex-col items-end gap-0.5 shrink-0">
+                    <TypographySmall className="font-mono tabular-nums text-muted-foreground">
+                      {edu.period}
+                    </TypographySmall>
                     <TypographySmall className="text-muted-foreground/50">
                       {edu.location}
                     </TypographySmall>
                   </div>
-                  <div className="flex flex-col items-end gap-0.5 shrink-0">
-                    <TypographySmall className="font-mono tabular-nums text-muted-foreground">
-                      {edu.period}
-                    </TypographySmall>
-                  </div>
+                </div>
+                <div className="flex gap-3 sm:hidden">
+                  <TypographySmall className="font-mono tabular-nums text-muted-foreground">
+                    {edu.period}
+                  </TypographySmall>
+                  <span className="text-muted-foreground/40 text-xs">·</span>
+                  <TypographySmall className="text-muted-foreground/50">
+                    {edu.location}
+                  </TypographySmall>
                 </div>
                 <ul className="space-y-2.5" role="list">
                   {edu.highlights.map((point, idx) => (
