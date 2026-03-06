@@ -11,6 +11,7 @@ tags:
 ---
 
 import { TypographyMark } from "@/components/ui/typography";
+import { RoughDiagram } from "@/components/ui/rough-diagram";
 
 When I started building Soteira, the assumption from most people I talked to was: *you need a GPU for anything real-time with ML*.
 
@@ -18,25 +19,27 @@ That's true if you're running large models, doing batch inference, or handling h
 
 Soteira does this with a 3-gate pipeline optimized for Apple Silicon M2. Let me walk through how it works.
 
-<Mermaid code={`
-flowchart TD
-    A[Video Input<br/>Webcam/RTSP/File] --> B[Gate 1: Motion Detection<br/>MOG2 Background Subtraction<br/>~5ms per frame]
-    B -->|Motion Detected| C[Gate 2: Scene Change<br/>HSV Histogram + SSIM<br/>~3ms]
-    B -->|No Motion| Z[Frame Discarded]
-    C -->|Scene Changed OR Motion Spike| D[Gate 3: Object Detection<br/>YOLOv5n + IOU Tracking<br/>8-15ms]
-    C -->|No Significant Change| Z
-    D -->|New Object Confirmed| E[Queue for LLM<br/>Background Thread]
-    D -->|No New Objects| Z
-    E --> F[LLM Analysis<br/>~100ms async]
-    
-    style A fill:#e1f5ff,stroke:#0d47a1
-    style B fill:#fff3cd,stroke:#856404
-    style C fill:#d4edda,stroke:#155724
-    style D fill:#f8d7da,stroke:#721c24
-    style E fill:#d1ecf1,stroke:#0c5460
-    style F fill:#e2e3e5,stroke:#383d41
-    style Z fill:#f8f9fa,stroke:#6c757d,stroke-dasharray: 5 5
-`} />
+<RoughDiagram
+  nodes={[
+    { id: "a",  label: "Video Input",          color: "blue"   },
+    { id: "b",  label: "Gate 1: Motion ~5ms",  color: "yellow" },
+    { id: "c",  label: "Gate 2: Scene ~3ms",   color: "green"  },
+    { id: "d",  label: "Gate 3: YOLO 8-15ms",  color: "red"    },
+    { id: "e",  label: "Queue for LLM",        color: "blue"   },
+    { id: "f",  label: "LLM Analysis ~100ms",  color: "purple" },
+    { id: "z",  label: "Frame Discarded"                       },
+  ]}
+  edges={[
+    { from: "a", to: "b"                              },
+    { from: "b", to: "c", label: "motion detected"   },
+    { from: "b", to: "z", label: "no motion"         },
+    { from: "c", to: "d", label: "scene changed"     },
+    { from: "c", to: "z", label: "no change"         },
+    { from: "d", to: "e", label: "new object"        },
+    { from: "d", to: "z", label: "no new objects"    },
+    { from: "e", to: "f"                              },
+  ]}
+/>
 
 ## The Problem With Naive Video Inference
 
@@ -182,25 +185,22 @@ When new objects are confirmed, frames are saved and queued for LLM processing i
 
 End-to-end latency from frame capture to response breaks down roughly as:
 
-<Mermaid code={`
-gantt
-    title Frame Processing Latency Breakdown (Triggered Path)
-    dateFormat s
-    axisFormat %Lms
-
-    section Frame Processing
-    Capture + Preprocessing     :0, 5
-    Gate 1: Motion (MOG2)     :5, 10
-    Gate 2: Scene Change        :10, 13
-    Gate 3: YOLOv5n (MPS)    :13, 28
-    Queue Frame                 :28, 28
-    
-    section Async Processing
-    LLM Analysis (Background)    :28, 128
-    
-    section Total
-    Total Latency               :128, 128
-`} />
+<RoughDiagram
+  direction="LR"
+  nodes={[
+    { id: "s1", label: "Capture ~5ms",     color: "blue"   },
+    { id: "s2", label: "Gate 1: MOG2 ~5ms", color: "yellow" },
+    { id: "s3", label: "Gate 2: SSIM ~3ms", color: "green"  },
+    { id: "s4", label: "Gate 3: YOLO ~15ms", color: "red"   },
+    { id: "s5", label: "LLM async ~100ms",  color: "purple" },
+  ]}
+  edges={[
+    { from: "s1", to: "s2" },
+    { from: "s2", to: "s3" },
+    { from: "s3", to: "s4" },
+    { from: "s4", to: "s5", label: "queued" },
+  ]}
+/>
 
 The latency table summarizes it:
 
