@@ -3,6 +3,7 @@ import { DecorIcon } from "@/components/ui/border";
 import { Divider } from "@/components/ui/divider";
 import { SectionLabel, TypographyMuted, TypographySmall } from "@/components/ui/typography";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 const education = [
   {
@@ -12,9 +13,28 @@ const education = [
     location: "Punjab, India",
     highlights: [
       "CGPA: 8.52",
-      "Solved over 600 coding questions across LeetCode and GeeksforGeeks",
-      "AWS Certified Solutions Architect – Amazon Web Services, 2024",
-      "Google Associate Cloud Engineer Certification – Google Cloud, 2023",
+      <>
+        Solved 700+ coding questions on{" "}
+        <Link href="https://leetcode.com/u/adysleetcode/" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+          LeetCode
+        </Link>
+        {" "}and{" "}
+        <Link href="https://www.geeksforgeeks.org/profile/adysgfg?tab=activity" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+          GeeksforGeeks
+        </Link>
+      </>,
+      <>
+        <Link href="https://www.coursera.org/account/accomplishments/professional-cert/3V2Q2RD4X7NG" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+          AWS Certified Solutions Architect
+        </Link>
+        {" "}– Amazon Web Services, 2024
+      </>,
+      <>
+        <Link href="https://drive.google.com/file/d/1AAtIxFsjt6rqrTe52p9mTzh7wxzh2sQR/view" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+          Google Associate Cloud Engineer Certification
+        </Link>
+        {" "}– Google Cloud, 2023
+      </>,
     ],
     tags: ["Computer Science", "Engineering", "Alumni"],
   },
@@ -57,8 +77,8 @@ export function Education() {
                   </div>
                 </div>
                 <ul className="space-y-2.5" role="list">
-                  {edu.highlights.map((point) => (
-                    <li key={point} className="flex gap-2.5">
+                  {edu.highlights.map((point, idx) => (
+                    <li key={idx} className="flex gap-2.5">
                       <span
                         className="mt-2 size-1 rounded-full bg-muted-foreground/40 shrink-0"
                         aria-hidden="true"
