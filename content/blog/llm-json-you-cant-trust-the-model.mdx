@@ -57,12 +57,12 @@ Before showing the extraction code, here's the architecture:
 <RoughDiagram
   direction="LR"
   nodes={[
-    { id: "a", label: "LLM Response" },
-    { id: "b", label: "Layer 1: Prompt" },
-    { id: "c", label: "Layer 2: Extraction" },
-    { id: "d", label: "Layer 3: Zod", shape: "diamond" },
-    { id: "e", label: "Return Parsed Data" },
-    { id: "f", label: "Retry or Fallback" },
+    { id: "a", label: "LLM Response",      color: "blue" },
+    { id: "b", label: "Layer 1: Prompt", color: "yellow" },
+    { id: "c", label: "Layer 2: Extraction", color: "green" },
+    { id: "d", label: "Layer 3: Zod", shape: "diamond", color: "red" },
+    { id: "e", label: "Return Parsed Data", color: "purple" },
+    { id: "f", label: "Retry or Fallback", color: "orange" },
   ]}
   edges={[
     { from: "a", to: "b" },
@@ -195,29 +195,29 @@ Zod validation failure means the model returned structurally wrong output — mi
 
 <RoughDiagram
   nodes={[
-    { id: "a", label: "Zod Validation Failed" },
-    { id: "b", label: "Feature Type?", shape: "diamond" },
-    { id: "c", label: "Graceful Fallback" },
-    { id: "d", label: "Retry with Backoff" },
-    { id: "c1", label: "Use Original Data" },
-    { id: "c2", label: "Resume Stays Usable" },
-    { id: "d1", label: "Wait 2^n seconds" },
-    { id: "d2", label: "Retry Extraction" },
-    { id: "d3", label: "Success?", shape: "diamond" },
-    { id: "e", label: "Return Data" },
-    { id: "g", label: "Log Error & Fail" },
+    { id: "a", label: "Zod Validation Failed", color: "red" },
+    { id: "b", label: "Feature Type?", shape: "diamond", color: "yellow" },
+    { id: "c", label: "Graceful Fallback", color: "green" },
+    { id: "d", label: "Retry with Backoff", color: "blue" },
+    { id: "c1", label: "Use Original Data", color: "purple" },
+    { id: "c2", label: "Resume Stays Usable", color: "purple" },
+    { id: "d1", label: "Wait 2^n seconds", color: "blue" },
+    { id: "d2", label: "Retry Extraction", color: "blue" },
+    { id: "d3", label: "Success?", shape: "diamond", color: "yellow" },
+    { id: "e", label: "Return Data", color: "green" },
+    { id: "g", label: "Log Error & Fail", color: "red" },
   ]}
   edges={[
-    { from: "a",  to: "b" },
-    { from: "b",  to: "c",  label: "best effort" },
-    { from: "b",  to: "d",  label: "critical" },
-    { from: "c",  to: "c1" },
+    { from: "a", to: "b" },
+    { from: "b", to: "c", label: "best effort" },
+    { from: "b", to: "d", label: "critical" },
+    { from: "c", to: "c1" },
     { from: "c1", to: "c2" },
-    { from: "d",  to: "d1" },
+    { from: "d", to: "d1" },
     { from: "d1", to: "d2" },
     { from: "d2", to: "d3" },
-    { from: "d3", to: "e",  label: "yes" },
-    { from: "d3", to: "g",  label: "max retries" },
+    { from: "d3", to: "e", label: "yes" },
+    { from: "d3", to: "g", label: "max retries" },
   ]}
 />
 
