@@ -1,7 +1,7 @@
 export const siteConfig = {
     name: "Aditya Jindal",
     domain: "adysfolio.vercel.app",
-    role: "AI Engineer",
+    role: "Software Engineer",
     email: "work.adityajindal@gmail.com",
     description:
         "Backend engineer building distributed AI systems with clarity, structure, and rigor.",
