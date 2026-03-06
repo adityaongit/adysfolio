@@ -67,12 +67,13 @@ export const certifications = [
 
 export const projects = [
     {
-        title: "SplitWatt",
+        title: "ColdCraft",
         description:
-            "An open-source electricity bill splitter that handles the math nobody wants to do — submeter-based cost splitting, UPI integration, and a Lighthouse 100 score across all four categories.",
-        highlights: ["Next.js", "Better Auth", "TypeScript", "Umami"],
-        live: "https://splitwatt.vercel.app/",
-        github: "https://github.com/adityaongit/electricity-bill-split",
+            "A cold outreach toolkit for job seekers — template management with variable substitution, AI-powered resume tailoring, and bulk email campaigns sent directly through your own Gmail account via OAuth.",
+        highlights: ["Next.js", "MongoDB", "Gmail API", "LLMs", "Better Auth"],
+        live: null,
+        github: "https://github.com/adityaongit/cold-craft",
+        wip: true,
     },
     {
         title: "Soteira",
@@ -83,20 +84,19 @@ export const projects = [
         github: "https://github.com/adityaongit/soteira",
     },
     {
+        title: "SplitWatt",
+        description:
+            "An open-source electricity bill splitter that handles the math nobody wants to do — submeter-based cost splitting, UPI integration, and a Lighthouse 100 score across all four categories.",
+        highlights: ["Next.js", "Better Auth", "TypeScript", "Umami"],
+        live: "https://splitwatt.vercel.app/",
+        github: "https://github.com/adityaongit/electricity-bill-split",
+    },
+    {
         title: "Pair Code",
         description:
             "A collaborative coding environment where teams write and run code together in real time. Built-in compiler, multi-language support, and no setup required — just share a link and start.",
         highlights: ["Node.js", "WebSockets", "React.js"],
         live: "https://paircode-dev.vercel.app/",
         github: "https://github.com/adityaongit/paircode",
-    },
-    {
-        title: "ColdCraft",
-        description:
-            "A cold outreach toolkit for job seekers — template management with variable substitution, AI-powered resume tailoring, and bulk email campaigns sent directly through your own Gmail account via OAuth.",
-        highlights: ["Next.js", "MongoDB", "Gmail API", "LLMs", "Better Auth"],
-        live: null,
-        github: "https://github.com/adityaongit/cold-craft",
-        wip: true,
     },
 ];
