@@ -6,14 +6,15 @@ import { Badge } from "@/components/ui/badge";
 
 const education = [
   {
-    institution: "Your University",
-    degree: "Bachelor of Technology in Computer Science",
-    period: "2022 – 2026",
-    location: "City, Country",
+    institution: "Chandigarh University",
+    degree: "BE in Computer Science & Engineering",
+    period: "2020 – 2024",
+    location: "Punjab, India",
     highlights: [
-      "Relevant coursework: Data Structures, Algorithms, Database Systems, Distributed Systems",
-      "GPA: X.XX / 4.00",
-      "Relevant achievement or honor",
+      "CGPA: 8.52",
+      "Solved over 600 coding questions across LeetCode and GeeksforGeeks",
+      "AWS Certified Solutions Architect – Amazon Web Services, 2024",
+      "Google Associate Cloud Engineer Certification – Google Cloud, 2023",
     ],
     tags: ["Computer Science", "Engineering", "Alumni"],
   },
