@@ -44,7 +44,14 @@ export function BuiltThings() {
             className="group transition-transform duration-300 hover:-translate-y-0.5 will-change-transform"
           >
             <article className="space-y-4" aria-label={project.title}>
-              <TypographyH3 className="text-xl">{project.title}</TypographyH3>
+              <div className="flex items-center gap-2">
+                <TypographyH3 className="text-xl">{project.title}</TypographyH3>
+                {"wip" in project && project.wip && (
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-mono uppercase tracking-wider">
+                    WIP
+                  </Badge>
+                )}
+              </div>
               <TypographyMuted className="leading-relaxed">
                 {project.description}
               </TypographyMuted>
@@ -117,7 +124,7 @@ export function BuiltThings() {
         </TypographyLead>
         <Button asChild size="lg" className="rounded-lg font-semibold">
           <Link
-            href="https://github.com/adityajindal"
+            href="https://github.com/adityaongit"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Explore the Chaos — view all projects on GitHub"
