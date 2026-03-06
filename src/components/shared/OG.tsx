@@ -1,15 +1,16 @@
 const theme = {
-  background: "#141417",
-  backgroundAlt: "#1a1a20",
+  background: "#0d0d10",
+  backgroundAlt: "#141417",
   foreground: "#f5f5f7",
   primary: "#e8e8ec",
   muted: "#6b6b80",
   mutedBright: "#9999aa",
-  border: "rgba(255, 255, 255, 0.08)",
-  borderBright: "rgba(255, 255, 255, 0.15)",
+  border: "rgba(255, 255, 255, 0.06)",
+  borderBright: "rgba(255, 255, 255, 0.12)",
   accent: "#2a2a35",
-  green: "#10b981",
   purpleAccent: "#8b7cf8",
+  purpleLight: "#a78bfa",
+  purpleGlow: "rgba(139, 124, 248, 0.15)",
 };
 
 function LogoGlyph({ size = 32, color }: { size?: number; color: string }) {
@@ -28,6 +29,7 @@ function LogoGlyph({ size = 32, color }: { size?: number; color: string }) {
     </svg>
   );
 }
+
 export interface OGImageProps {
   title: string;
   description: string;
@@ -44,18 +46,25 @@ function truncate(str: string, max: number): string {
 
 function getTitleFontSize(title: string): number {
   const len = title.length;
-  if (len < 20) return 64;
-  if (len < 40) return 52;
-  if (len < 60) return 42;
-  if (len < 80) return 34;
-  return 28;
+  if (len < 20) return 72;
+  if (len < 35) return 58;
+  if (len < 50) return 48;
+  if (len < 70) return 38;
+  return 30;
 }
 
 function getDescFontSize(desc: string): number {
   const len = desc.length;
-  if (len < 80) return 24;
-  if (len < 140) return 20;
-  return 17;
+  if (len < 80) return 22;
+  if (len < 140) return 18;
+  return 15;
+}
+
+// Helper to check if title is essentially the same as name (avoiding visual duplication)
+function isTitleSameAsName(title: string, name: string): boolean {
+  const normalizedTitle = title.toLowerCase().trim();
+  const normalizedName = name.toLowerCase().trim();
+  return normalizedTitle === normalizedName || normalizedTitle.includes(normalizedName);
 }
 
 export function OGImage({
@@ -67,6 +76,8 @@ export function OGImage({
   path,
   tags,
 }: OGImageProps) {
+  const titleIsName = isTitleSameAsName(title, name);
+
   return (
     <div
       style={{
@@ -76,266 +87,302 @@ export function OGImage({
         position: "relative",
         overflow: "hidden",
         fontFamily: "'Geist', sans-serif",
-        display: "flex",
       }}
     >
+      {/* Top gradient accent line */}
       <div
         style={{
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
-          height: 3,
-          background: `linear-gradient(90deg, ${theme.purpleAccent} 0%, #c084fc 40%, #f472b6 70%, transparent 100%)`,
+          height: 4,
+          background: `linear-gradient(90deg, ${theme.purpleAccent} 0%, ${theme.purpleLight} 50%, transparent 100%)`,
         }}
       />
 
+      {/* Subtle grid overlay */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
           `,
-          backgroundSize: "60px 60px",
+          backgroundSize: "80px 80px",
         }}
       />
 
+      {/* Large background watermark with name (when title would duplicate name) */}
+      {titleIsName && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: -20,
+            right: -40,
+            fontSize: 280,
+            fontWeight: 900,
+            color: theme.purpleAccent,
+            opacity: 0.04,
+            letterSpacing: "-0.05em",
+            lineHeight: 1,
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        >
+          {name.toUpperCase()}
+        </div>
+      )}
+
+      {/* Diagonal purple glow accent */}
       <div
         style={{
           position: "absolute",
-          top: -120,
-          right: -80,
-          width: 600,
-          height: 600,
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(139,124,248,0.08) 0%, transparent 70%)",
-        }}
-      />
-
-      <svg
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          opacity: 0.035,
-          mixBlendMode: "overlay",
-        }}
-      >
-        <filter id="noise">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.75"
-            numOctaves="4"
-            stitchTiles="stitch"
-          />
-          <feColorMatrix type="saturate" values="0" />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#noise)" />
-      </svg>
-
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%)",
+          top: -100,
+          right: -200,
+          width: 700,
+          height: 700,
+          background: `radial-gradient(circle, ${theme.purpleGlow} 0%, transparent 60%)`,
           pointerEvents: "none",
         }}
       />
 
+      {/* Bottom vignette */}
       <div
         style={{
           position: "absolute",
-          bottom: -100,
-          right: -30,
-          transform: "rotate(10deg)",
-          opacity: 0.03,
+          inset: 0,
+          background: "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 50%)",
+          pointerEvents: "none",
         }}
-      >
-        <LogoGlyph size={500} color={theme.foreground} />
-      </div>
+      />
 
+      {/* Main content */}
       <div
         style={{
-          padding: "0 80px 56px 80px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          width: "100%",
+          display: "grid",
+          gridTemplateColumns: titleIsName ? "1fr" : "240px 1fr",
+          height: "100%",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingTop: 44,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <LogoGlyph size={32} color={theme.foreground} />
-
-            <div
-              style={{
-                width: 1,
-                height: 20,
-                background: `linear-gradient(to bottom, transparent, ${theme.borderBright}, transparent)`,
-              }}
-            />
-
-            <span
-              style={{
-                fontFamily: "'Geist Mono', monospace",
-                fontWeight: 700,
-                fontSize: 12,
-                letterSpacing: "0.18em",
-                color: theme.muted,
-                textTransform: "uppercase",
-              }}
-            >
-              {path}
-            </span>
-          </div>
-
-          <span
-            style={{
-              fontFamily: "'Geist Mono', monospace",
-              fontSize: 20,
-              fontStyle: "italic",
-              color: theme.muted,
-            }}
-          >
-            {domain}
-          </span>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 22,
-            justifyContent: "center",
-            flex: 1,
-          }}
-        >
-          {tags.length > 0 && (
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    padding: "5px 14px",
-                    fontSize: 11,
-                    fontFamily: "'Geist Mono', monospace",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    border: `1px solid rgba(139,124,248,0.3)`,
-                    backgroundColor: "rgba(139,124,248,0.07)",
-                    color: "#b8aefc",
-                    borderRadius: 6,
-                  }}
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
-
+        {/* Left sidebar - only shown when title is different from name */}
+        {!titleIsName && (
           <div
             style={{
-              fontSize: getTitleFontSize(title),
-              fontWeight: 700,
-              lineHeight: 1.1,
-              letterSpacing: "-0.03em",
-              color: theme.foreground,
+              padding: "48px 0 48px 48px",
               display: "flex",
-              flexWrap: "wrap",
-              alignItems: "baseline",
-              columnGap: 16,
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              borderRight: `1px solid ${theme.border}`,
             }}
           >
-            {title && <span>{truncate(title, 80)}</span>}
-          </div>
-
-          <div
-            style={{
-              fontSize: getDescFontSize(description),
-              color: theme.mutedBright,
-              maxWidth: "72%",
-              lineHeight: 1.55,
-              fontStyle: "italic",
-            }}
-          >
-            {truncate(description, 160)}
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            borderTop: `1px solid ${theme.border}`,
-            paddingTop: 28,
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <span
                 style={{
-                  fontSize: 13,
+                  fontSize: 11,
                   fontWeight: 700,
                   textTransform: "uppercase",
-                  letterSpacing: "0.35em",
+                  letterSpacing: "0.3em",
                   color: theme.purpleAccent,
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
                 {role}
               </span>
-
-              <div
+              <span
                 style={{
-                  fontSize: 36,
+                  fontSize: 32,
                   fontWeight: 700,
                   color: theme.foreground,
                   letterSpacing: "-0.02em",
+                  lineHeight: 1.2,
                 }}
               >
                 {name}
-              </div>
+              </span>
+              <div
+                style={{
+                  width: 32,
+                  height: 2,
+                  background: theme.purpleAccent,
+                  marginTop: 12,
+                }}
+              />
             </div>
+          </div>
+        )}
 
+        {/* Main content area */}
+        <div
+          style={{
+            padding: titleIsName ? "60px 80px 60px 80px" : "48px 80px 48px 60px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* Top bar */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <LogoGlyph size={28} color={theme.purpleAccent} />
+              <span
+                style={{
+                  fontFamily: "'Geist Mono', monospace",
+                  fontWeight: 600,
+                  fontSize: 11,
+                  letterSpacing: "0.18em",
+                  color: theme.muted,
+                  textTransform: "uppercase",
+                }}
+              >
+                {path}
+              </span>
+            </div>
+            <span
+              style={{
+                fontFamily: "'Geist Mono', monospace",
+                fontSize: 16,
+                color: theme.muted,
+                opacity: 0.7,
+              }}
+            >
+              {domain}
+            </span>
           </div>
 
+          {/* Center content - title and description */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-end",
-              gap: 8,
-              opacity: 0.45,
+              gap: 20,
+              justifyContent: "center",
+              padding: titleIsName ? "40px 0" : "20px 0",
             }}
           >
+            {/* Tags */}
+            {tags.length > 0 && (
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {tags.slice(0, 4).map((tag) => (
+                  <span
+                    key={tag}
+                    style={{
+                      padding: "4px 10px",
+                      fontSize: 10,
+                      fontFamily: "'Geist Mono', monospace",
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                      border: `1px solid ${theme.purpleAccent}`,
+                      backgroundColor: theme.purpleGlow,
+                      color: theme.purpleLight,
+                      borderRadius: 4,
+                    }}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Title */}
             <div
-              style={{ width: 40, height: 1, backgroundColor: theme.muted }}
-            />
-            <span
               style={{
-                fontFamily: "'Geist Mono', monospace",
-                fontSize: 17,
-                color: theme.muted,
-                letterSpacing: "0.12em",
-                fontWeight: 600,
+                fontSize: getTitleFontSize(title),
+                fontWeight: 800,
+                lineHeight: 1.1,
+                letterSpacing: "-0.04em",
+                color: theme.foreground,
               }}
             >
-              © {new Date().getFullYear()}
-            </span>
+              {truncate(title, 100)}
+            </div>
+
+            {/* Description */}
+            {description && (
+              <div
+                style={{
+                  fontSize: getDescFontSize(description),
+                  color: theme.mutedBright,
+                  maxWidth: "80%",
+                  lineHeight: 1.6,
+                }}
+              >
+                {truncate(description, 180)}
+              </div>
+            )}
+          </div>
+
+          {/* Bottom bar */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingTop: 20,
+              borderTop: `1px solid ${theme.border}`,
+            }}
+          >
+            {/* When title IS name, show subtle role/name here */}
+            {titleIsName && (
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.3em",
+                    color: theme.purpleAccent,
+                    fontFamily: "'Geist Mono', monospace",
+                  }}
+                >
+                  {role}
+                </span>
+                <span
+                  style={{
+                    fontSize: 14,
+                    color: theme.muted,
+                  }}
+                >
+                  {name}
+                </span>
+              </div>
+            )}
+
+            {/* When title is NOT name, show copyright here */}
+            {!titleIsName && (
+              <span
+                style={{
+                  fontFamily: "'Geist Mono', monospace",
+                  fontSize: 13,
+                  color: theme.muted,
+                  letterSpacing: "0.1em",
+                  opacity: 0.6,
+                }}
+              >
+                © {new Date().getFullYear()}
+              </span>
+            )}
+
+            {/* Decorative element */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div
+                style={{
+                  width: 24,
+                  height: 1,
+                  background: theme.purpleAccent,
+                  opacity: 0.5,
+                }}
+              />
+              <LogoGlyph size={20} color={theme.purpleAccent} />
+            </div>
           </div>
         </div>
       </div>
