@@ -15,9 +15,6 @@ const footerNav = [
 export function Footer() {
   return (
     <footer className="relative mt-auto" aria-label="Site footer">
-      {/* Purple accent line at top */}
-      <div className="h-px w-full bg-gradient-to-r from-purple-500 via-purple-400 to-transparent" />
-
       <div className="relative mx-auto max-w-5xl px-6 sm:px-8 lg:px-10">
         {/* Corner accents */}
         <div className="absolute -top-px left-0 w-px h-4 bg-border" aria-hidden="true" />
@@ -44,9 +41,9 @@ export function Footer() {
             </div>
 
             {/* Center: Navigation */}
-            <div className="flex flex-col gap-3 md:order-2 md:items-center">
+            <div className="flex flex-col gap-3 md:order-2">
               <span
-                className="text-xs font-mono uppercase tracking-widest text-muted-foreground md:self-start"
+                className="text-xs font-mono uppercase tracking-widest text-muted-foreground"
                 aria-hidden="true"
               >
                 Navigate
