@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     const name = getParam(searchParams, "name", "Aditya Jindal", 40);
     const domain = getParam(searchParams, "domain", "adysfolio.vercel.app", 50);
     const path = getParam(searchParams, "path", "home / blog", 60);
-    const role = getParam(searchParams, "role", "AI Engineer", 50);
+    const role = getParam(searchParams, "role", "Software Engineer", 50);
 
     const tags = (searchParams.get("tags")?.split(",").filter(Boolean) ?? [])
       .slice(0, 4)

@@ -33,12 +33,9 @@ export function RulesIFollow() {
 
       <div className="mt-14 max-w-3xl">
         <TypographyLead>
-          I build with{" "}
-          <TypographyMark>
-            clarity, structure, and a bias toward automation
-          </TypographyMark>{" "}
-          — because software should feel simple, even when the logic behind it
-          isn't.
+          Backend engineer turned{" "}
+          <TypographyMark>AI builder</TypographyMark> — Xoogler shipping
+          systems with clarity, structure, and automation.
         </TypographyLead>
       </div>
     </Section>
