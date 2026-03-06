@@ -60,6 +60,13 @@ flowchart LR
     C --> D{Layer 3: Zod Validation}
     D -->|Valid| E[Return Parsed Data]
     D -->|Invalid| F[Retry or Fallback]
+    
+    style A fill:#e1f5ff,stroke:#0d47a1
+    style B fill:#fff3cd,stroke:#856404
+    style C fill:#d4edda,stroke:#155724
+    style D fill:#f8d7da,stroke:#721c24
+    style E fill:#d1ecf1,stroke:#0c5460
+    style F fill:#e2e3e5,stroke:#383d41
 `} />
 
 ## The Extraction Layer
@@ -199,6 +206,12 @@ flowchart TD
     F -->|No| D1
     F -->|Yes| G[Log Error & Fail]
     
+    style A fill:#f8d7da,stroke:#721c24
+    style B fill:#fff3cd,stroke:#856404
+    style C fill:#d4edda,stroke:#155724
+    style D fill:#f8d7da,stroke:#721c24
+    style E fill:#d1ecf1,stroke:#0c5460
+    style G fill:#e2e3e5,stroke:#383d41
 `} />
 
 For ColdCraft's resume tailor, I chose a graceful fallback over a retry, because the feature is best-effort by design. If the LLM can't rewrite bullets cleanly, you get the original bullets back unchanged. The resume is still usable:
