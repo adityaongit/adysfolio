@@ -37,10 +37,9 @@ export function Hero() {
           <TypographyLead>
             I build with{" "}
             <TypographyMark>
-              clarity, structure, and distributed AI systems
+              clarity and structure
             </TypographyMark>{" "}
-            — because software should feel simple, even when the logic behind
-            it isn't.
+            — designing backend systems and AI solutions that stay simple, even when the problems aren’t.
           </TypographyLead>
 
           <nav aria-label="Primary actions">
