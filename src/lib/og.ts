@@ -129,8 +129,8 @@ export function buildMeta(
                     alt: title,
                 },
             ],
-            creator: siteConfig.twitterHandle,
-            site: siteConfig.twitterHandle,
+            creator: siteConfig.name,
+            site: siteConfig.domain,
         },
     };
 }
