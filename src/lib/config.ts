@@ -15,6 +15,8 @@ export const siteConfig = {
     sameAs: [
         "https://github.com/adityaongit",
         "https://www.linkedin.com/in/adityaonin/",
+        "https://leetcode.com/u/adysleetcode/",
+        "https://www.geeksforgeeks.org/profile/adysgfg?tab=activity",
     ] as const,
     resumeURL:
         "https://github.com/adityaongit/resume/releases/latest/download/Aditya_Jindal_Resume.pdf",
@@ -33,8 +35,35 @@ export const siteConfig = {
             href: "https://www.linkedin.com/in/adityaonin/",
             label: "LinkedIn",
         },
+        {
+            platform: "leetcode",
+            href: "https://leetcode.com/u/adysleetcode/",
+            label: "LeetCode",
+        },
+        {
+            platform: "geeksforgeeks",
+            href: "https://www.geeksforgeeks.org/profile/adysgfg?tab=activity",
+            label: "GeeksforGeeks",
+        },
     ] as const,
 } as const;
+
+export const certifications = [
+    {
+        id: "aws-solutions-architect",
+        name: "AWS Certified Solutions Architect",
+        issuer: "Amazon Web Services",
+        year: "2024",
+        url: "https://www.coursera.org/account/accomplishments/professional-cert/3V2Q2RD4X7NG",
+    },
+    {
+        id: "gcp-ace",
+        name: "Google Associate Cloud Engineer",
+        issuer: "Google Cloud",
+        year: "2023",
+        url: "https://drive.google.com/file/d/1AAtIxFsjt6rqrTe52p9mTzh7wxzh2sQR/view",
+    },
+] as const;
 
 export const projects = [
     {

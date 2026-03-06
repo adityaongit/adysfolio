@@ -10,7 +10,7 @@ const education = [
     institution: "Chandigarh University",
     degree: "BE in Computer Science & Engineering",
     period: "2020 – 2024",
-    location: "Punjab, India",
+    location: "Chandigarh, India",
     highlights: [
       "CGPA: 8.52",
       <>
