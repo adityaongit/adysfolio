@@ -11,6 +11,7 @@ tags:
 ---
 
 import { TypographyMark } from "@/components/ui/typography";
+import { RoughDiagram } from "@/components/ui/rough-diagram";
 
 I was building an AI feature for ColdCraft — a cold outreach tool I'm working on — that takes a job description and rewrites your resume bullet points to match it. The LLM does the heavy lifting: read the job description, understand the role, rewrite bullets with relevant keywords, reorder skills by relevance.
 
@@ -53,21 +54,24 @@ The practical answer is: assume the output is dirty, and write code that cleans 
 
 Before showing the extraction code, here's the architecture:
 
-<Mermaid code={`
-flowchart LR
-    A[LLM Response] --> B[Layer 1: Prompt<br/>Reduces dirty output probability]
-    B --> C[Layer 2: Extraction<br/>Strips markdown, finds JSON, matches brackets]
-    C --> D{Layer 3: Zod Validation}
-    D -->|Valid| E[Return Parsed Data]
-    D -->|Invalid| F[Retry or Fallback]
-    
-    style A fill:#e1f5ff,stroke:#0d47a1
-    style B fill:#fff3cd,stroke:#856404
-    style C fill:#d4edda,stroke:#155724
-    style D fill:#f8d7da,stroke:#721c24
-    style E fill:#d1ecf1,stroke:#0c5460
-    style F fill:#e2e3e5,stroke:#383d41
-`} />
+<RoughDiagram
+  direction="LR"
+  nodes={[
+    { id: "a", label: "LLM Response" },
+    { id: "b", label: "Layer 1: Prompt" },
+    { id: "c", label: "Layer 2: Extraction" },
+    { id: "d", label: "Layer 3: Zod", shape: "diamond" },
+    { id: "e", label: "Return Parsed Data" },
+    { id: "f", label: "Retry or Fallback" },
+  ]}
+  edges={[
+    { from: "a", to: "b" },
+    { from: "b", to: "c" },
+    { from: "c", to: "d" },
+    { from: "d", to: "e", label: "valid" },
+    { from: "d", to: "f", label: "invalid" },
+  ]}
+/>
 
 ## The Extraction Layer
 
@@ -189,30 +193,33 @@ The system prompt still asks for clean JSON. The extraction handles the cases wh
 
 Zod validation failure means the model returned structurally wrong output — missing a required field, wrong type somewhere, schema mismatch. At that point you have two options: retry or fall back.
 
-<Mermaid code={`
-flowchart TD
-    A[Zod Validation Failed] --> B{Feature Type?}
-    B -->|Best Effort| C[Graceful Fallback]
-    B -->|Critical Data| D[Retry with Backoff]
-    
-    C --> C1[Use Original/Default Data]
-    C1 --> C2[Resume Stays Usable]
-    
-    D --> D1[Wait: 2^n seconds]
-    D1 --> D2[Retry Extraction]
-    D2 --> D3{Success?}
-    D3 -->|Yes| E[Return Data]
-    D3 -->|No| F{Max Retries Reached?}
-    F -->|No| D1
-    F -->|Yes| G[Log Error & Fail]
-    
-    style A fill:#f8d7da,stroke:#721c24
-    style B fill:#fff3cd,stroke:#856404
-    style C fill:#d4edda,stroke:#155724
-    style D fill:#f8d7da,stroke:#721c24
-    style E fill:#d1ecf1,stroke:#0c5460
-    style G fill:#e2e3e5,stroke:#383d41
-`} />
+<RoughDiagram
+  nodes={[
+    { id: "a", label: "Zod Validation Failed" },
+    { id: "b", label: "Feature Type?", shape: "diamond" },
+    { id: "c", label: "Graceful Fallback" },
+    { id: "d", label: "Retry with Backoff" },
+    { id: "c1", label: "Use Original Data" },
+    { id: "c2", label: "Resume Stays Usable" },
+    { id: "d1", label: "Wait 2^n seconds" },
+    { id: "d2", label: "Retry Extraction" },
+    { id: "d3", label: "Success?", shape: "diamond" },
+    { id: "e", label: "Return Data" },
+    { id: "g", label: "Log Error & Fail" },
+  ]}
+  edges={[
+    { from: "a",  to: "b" },
+    { from: "b",  to: "c",  label: "best effort" },
+    { from: "b",  to: "d",  label: "critical" },
+    { from: "c",  to: "c1" },
+    { from: "c1", to: "c2" },
+    { from: "d",  to: "d1" },
+    { from: "d1", to: "d2" },
+    { from: "d2", to: "d3" },
+    { from: "d3", to: "e",  label: "yes" },
+    { from: "d3", to: "g",  label: "max retries" },
+  ]}
+/>
 
 For ColdCraft's resume tailor, I chose a graceful fallback over a retry, because the feature is best-effort by design. If the LLM can't rewrite bullets cleanly, you get the original bullets back unchanged. The resume is still usable:
 
