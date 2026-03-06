@@ -35,8 +35,6 @@ export async function GET(req: NextRequest) {
     const path = getParam(searchParams, "path", "home / blog", 60);
     const role = getParam(searchParams, "role", "Software Engineer", 50);
 
-    const availableForHire = searchParams.get("available") !== "false";
-
     const tags = (searchParams.get("tags")?.split(",").filter(Boolean) ?? [])
       .slice(0, 4)
       .map((t) => truncate(decodeURIComponent(t.trim()), 20));
@@ -50,7 +48,6 @@ export async function GET(req: NextRequest) {
         path={path}
         role={role}
         tags={tags}
-        availableForHire={availableForHire}
       />,
       {
         width: 1200,

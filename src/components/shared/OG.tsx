@@ -36,7 +36,6 @@ export interface OGImageProps {
   domain: string;
   path: string;
   tags: string[];
-  availableForHire: boolean;
 }
 
 function truncate(str: string, max: number): string {
@@ -67,7 +66,6 @@ export function OGImage({
   domain,
   path,
   tags,
-  availableForHire,
 }: OGImageProps) {
   return (
     <div
@@ -313,45 +311,6 @@ export function OGImage({
               </div>
             </div>
 
-            {availableForHire && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  paddingTop: 6,
-                  paddingBottom: 6,
-                  paddingLeft: 12,
-                  paddingRight: 12,
-                  borderRadius: 6,
-                  backgroundColor: "rgba(16, 185, 129, 0.06)",
-                  border: `1px solid rgba(16, 185, 129, 0.2)`,
-                  alignSelf: "flex-start",
-                }}
-              >
-                <div
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 4,
-                    backgroundColor: theme.green,
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontFamily: "'Geist Mono', monospace",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    color: theme.green,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Available for hire
-                </span>
-              </div>
-            )}
           </div>
 
           <div
