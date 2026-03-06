@@ -4,6 +4,28 @@ import { Divider } from "@/components/ui/divider";
 import { SectionLabel, TypographyMuted, TypographySmall } from "@/components/ui/typography";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { certifications } from "@/lib/config";
+import type { ReactNode } from "react";
+
+const baseHighlights: (string | ReactNode)[] = [
+  "CGPA: 8.52",
+  <>
+    Solved 700+ coding questions on{" "}
+    <Link href="https://leetcode.com/u/adysleetcode/" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+      LeetCode
+    </Link>
+    {" "}and{" "}
+    <Link href="https://www.geeksforgeeks.org/profile/adysgfg?tab=activity" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+      GeeksforGeeks
+    </Link>
+  </>,
+];
+
+const certHighlights = certifications.map((cert) => (
+  <Link key={cert.id} href={cert.url} className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
+    {cert.name} – {cert.issuer}, {cert.year}
+  </Link>
+));
 
 const education = [
   {
@@ -11,31 +33,7 @@ const education = [
     degree: "BE in Computer Science & Engineering",
     period: "2020 – 2024",
     location: "Chandigarh, India",
-    highlights: [
-      "CGPA: 8.52",
-      <>
-        Solved 700+ coding questions on{" "}
-        <Link href="https://leetcode.com/u/adysleetcode/" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
-          LeetCode
-        </Link>
-        {" "}and{" "}
-        <Link href="https://www.geeksforgeeks.org/profile/adysgfg?tab=activity" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
-          GeeksforGeeks
-        </Link>
-      </>,
-      <>
-        <Link href="https://www.coursera.org/account/accomplishments/professional-cert/3V2Q2RD4X7NG" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
-          AWS Certified Solutions Architect
-        </Link>
-        {" "}– Amazon Web Services, 2024
-      </>,
-      <>
-        <Link href="https://drive.google.com/file/d/1AAtIxFsjt6rqrTe52p9mTzh7wxzh2sQR/view" className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
-          Google Associate Cloud Engineer Certification
-        </Link>
-        {" "}– Google Cloud, 2023
-      </>,
-    ],
+    highlights: [...baseHighlights, ...certHighlights],
     tags: ["Computer Science", "Engineering", "Alumni"],
   },
 ];
