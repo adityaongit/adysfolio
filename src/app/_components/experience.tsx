@@ -97,11 +97,10 @@ export function Experience() {
               >
                 <div className="overflow-hidden">
                   <div className="pb-6 space-y-4">
-                    <div className="flex gap-3 sm:hidden">
+                    <div className="flex flex-col gap-0.5 sm:hidden">
                       <TypographySmall className="font-mono tabular-nums text-muted-foreground">
                         {exp.period}
                       </TypographySmall>
-                      <span className="text-muted-foreground/40 text-xs">·</span>
                       <TypographySmall className="text-muted-foreground/50">
                         {exp.location}
                       </TypographySmall>
