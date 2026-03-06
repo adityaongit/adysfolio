@@ -67,13 +67,13 @@ export function Education() {
                     <TypographyMuted className="text-sm font-normal">
                       {edu.degree}
                     </TypographyMuted>
+                    <TypographySmall className="text-muted-foreground/50">
+                      {edu.location}
+                    </TypographySmall>
                   </div>
                   <div className="flex flex-col items-end gap-0.5 shrink-0">
                     <TypographySmall className="font-mono tabular-nums text-muted-foreground">
                       {edu.period}
-                    </TypographySmall>
-                    <TypographySmall className="text-muted-foreground/50">
-                      {edu.location}
                     </TypographySmall>
                   </div>
                 </div>
