@@ -54,7 +54,7 @@ export function Header() {
           aria-label={`${siteConfig.name} — home`}
           className="cursor-pointer"
         >
-          <Logo size={32} showWordmark aria-hidden="true" />
+          <Logo size={32} aria-hidden="true" />
         </Link>
 
         <div className="flex items-center gap-1">

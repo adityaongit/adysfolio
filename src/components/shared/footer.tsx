@@ -26,7 +26,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-[1fr_auto]">
           <div className="flex flex-col gap-4">
             <Link href="/" aria-label={`${siteConfig.name} — home`}>
-              <Logo size={32} showWordmark aria-hidden="true" />
+              <Logo size={32} aria-hidden="true" />
             </Link>
             <nav aria-label="Social links" className="flex gap-2">
               {siteConfig.social.map((item) => (
