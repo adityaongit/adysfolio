@@ -21,19 +21,19 @@ export async function GET(req: NextRequest) {
     const title = getParam(
       searchParams,
       "title",
-      "Building AI systems and developer tooling",
+      "Building AI systems with clarity and automation",
       100,
     );
     const description = getParam(
       searchParams,
       "description",
-      "Exploring the intersection of AI, performance, and full-stack engineering.",
+      "Backend engineer turned AI builder — Xoogler shipping production systems.",
       130,
     );
     const name = getParam(searchParams, "name", "Aditya Jindal", 40);
     const domain = getParam(searchParams, "domain", "adysfolio.vercel.app", 50);
     const path = getParam(searchParams, "path", "home / blog", 60);
-    const role = getParam(searchParams, "role", "Software Engineer", 50);
+    const role = getParam(searchParams, "role", "AI Engineer", 50);
 
     const tags = (searchParams.get("tags")?.split(",").filter(Boolean) ?? [])
       .slice(0, 4)
