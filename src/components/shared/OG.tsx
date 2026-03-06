@@ -228,18 +228,23 @@ export function OGImage({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              gap: 32,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <LogoGlyph size={28} color={theme.purpleAccent} />
               <span
                 style={{
                   fontFamily: "'Geist Mono', monospace",
                   fontWeight: 600,
-                  fontSize: 11,
+                  fontSize: 10,
                   letterSpacing: "0.18em",
                   color: theme.muted,
                   textTransform: "uppercase",
+                  maxWidth: 400,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {path}
@@ -248,9 +253,10 @@ export function OGImage({
             <span
               style={{
                 fontFamily: "'Geist Mono', monospace",
-                fontSize: 16,
+                fontSize: 13,
                 color: theme.muted,
-                opacity: 0.7,
+                opacity: 0.6,
+                whiteSpace: "nowrap",
               }}
             >
               {domain}
