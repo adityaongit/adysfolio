@@ -4,7 +4,7 @@ export const siteConfig = {
     role: "AI Engineer",
     email: "work.adityajindal@gmail.com",
     description:
-        "Backend engineer turned AI builder — Xoogler shipping systems with clarity, structure, and automation.",
+        "Backend engineer building distributed AI systems with clarity, structure, and rigor.",
     baseUrl:
         process.env.NEXT_PUBLIC_BASE_URL ??
         (process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL

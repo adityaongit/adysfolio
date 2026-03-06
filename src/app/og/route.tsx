@@ -21,13 +21,13 @@ export async function GET(req: NextRequest) {
     const title = getParam(
       searchParams,
       "title",
-      "Building AI systems with clarity and automation",
+      "Building distributed AI systems with clarity and rigor",
       100,
     );
     const description = getParam(
       searchParams,
       "description",
-      "Backend engineer turned AI builder — Xoogler shipping production systems.",
+      "Backend engineer building distributed AI systems with clarity, structure, and rigor.",
       130,
     );
     const name = getParam(searchParams, "name", "Aditya Jindal", 40);
