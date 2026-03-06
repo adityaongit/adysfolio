@@ -76,9 +76,9 @@ export function Footer() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <TypographyMuted
             className="font-mono tabular-nums"
-            aria-label={`© 2022 to ${currentYear()} ${siteConfig.name}. All rights reserved.`}
+            aria-label={`© ${currentYear()} ${siteConfig.name}. All rights reserved.`}
           >
-            &copy; 2022 - {currentYear()} {siteConfig.name}. All rights
+            &copy; {currentYear()} {siteConfig.name}. All rights
             reserved.
           </TypographyMuted>
           <ThemeToggle

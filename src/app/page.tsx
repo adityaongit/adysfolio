@@ -1,5 +1,6 @@
 import { BlogsCta } from "@/app/_components/blogs-cta";
 import { Contact } from "@/app/_components/contact";
+import { Education } from "@/app/_components/education";
 import { Experience } from "@/app/_components/experience";
 import { Hero } from "@/app/_components/hero";
 import { BuiltThings } from "@/app/_components/projects";
@@ -30,6 +31,7 @@ export default function Page() {
       <Experience />
       <BuiltThings />
       <BlogsCta />
+      <Education />
       <Contact />
     </>
   );

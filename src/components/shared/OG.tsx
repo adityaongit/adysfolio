@@ -375,7 +375,7 @@ export function OGImage({
                 fontWeight: 600,
               }}
             >
-              © 2022 — {new Date().getFullYear()}
+              © {new Date().getFullYear()}
             </span>
           </div>
         </div>
