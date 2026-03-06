@@ -1,5 +1,5 @@
-<svg width="1200" height="260" viewBox="0 0 1200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="adityajindal.com — source code">
-  <title>adityajindal.com source code</title>
+<svg width="1200" height="260" viewBox="0 0 1200 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="adysfolio.vercel.app — source code">
+  <title>adysfolio.vercel.app source code</title>
   <defs>
 
     <!-- 80x80 grid – full coverage, light theme -->
@@ -73,7 +73,7 @@
   <!-- Lead / role -->
   <text x="128" y="124"
     font-family="'Geist Mono','JetBrains Mono',Consolas,monospace"
-    font-size="13" fill="#9898b0" letter-spacing="0.04em">Software Engineer  ·  adityajindal.com</text>
+    font-size="13" fill="#9898b0" letter-spacing="0.04em">Software Engineer  ·  adysfolio.vercel.app</text>
 
   <!-- Description -->
   <text x="128" y="148"

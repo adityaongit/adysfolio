@@ -1,6 +1,6 @@
 export const siteConfig = {
     name: "Aditya Jindal",
-    domain: "adityajindal.com",
+    domain: "adysfolio.vercel.app",
     role: "Software Engineer",
     email: "work.adityajindal@gmail.com",
     description:
