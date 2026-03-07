@@ -1,6 +1,5 @@
 
 import { siteConfig } from "@/lib/config";
-import { formatFileDate } from "./date";
 
 export async function fetchResume() {
     const res = await fetch(siteConfig.resumeURL, {
@@ -18,6 +17,9 @@ export async function fetchResume() {
 
 export function getResumeFilename(download: boolean = false) {
     const formattedName = siteConfig.name.replace(/\s+/g, "_");
-    const formattedDate = formatFileDate();
-    return download ? `${formattedName}-Resume-${formattedDate}.pdf` : `${siteConfig.name}'s Resume.pdf`;
+    const roleAbbreviation = siteConfig.roleAbbeviation;
+
+    return download
+        ? `${formattedName}_${roleAbbreviation}_Resume.pdf`
+        : `${siteConfig.name}'s Resume.pdf`;
 }
