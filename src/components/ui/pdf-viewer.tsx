@@ -41,6 +41,7 @@ const Page = dynamic(() => import("react-pdf").then((m) => m.Page), {
 interface PdfContextValue {
   file: string;
   downloadHref: string;
+  downloadName?: string;
   numPages: number | null;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
@@ -62,12 +63,16 @@ export function usePdf() {
 interface PdfViewerProps extends HTMLAttributes<HTMLDivElement> {
   file: string;
   downloadHref?: string;
+  downloadName?: string;
   children?: ReactNode;
   loader?: ReactNode;
 }
 
 export const PdfViewer = forwardRef<HTMLDivElement, PdfViewerProps>(
-  ({ file, downloadHref, children, loader, className, ...props }, ref) => {
+  (
+    { file, downloadHref, downloadName, children, loader, className, ...props },
+    ref,
+  ) => {
     const [numPages, setNumPages] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [zoom, setZoom] = useState(1);
@@ -114,6 +119,7 @@ export const PdfViewer = forwardRef<HTMLDivElement, PdfViewerProps>(
         value={{
           file,
           downloadHref: downloadHref ?? file,
+          downloadName,
           numPages,
           currentPage,
           setCurrentPage,
@@ -354,11 +360,12 @@ export const PdfViewerOpen = () => {
 };
 
 export const PdfViewerDownload = ({ label }: { label?: string }) => {
-  const { downloadHref } = usePdf();
+  const { downloadHref, downloadName } = usePdf();
   return (
     <Button size="sm" asChild className="sm:px-3 px-2">
       <a
         href={downloadHref}
+        download={downloadName}
         aria-label={label ? `${label} — download as PDF` : "Download as PDF"}
       >
         <IconDownload className="h-4 w-4" aria-hidden="true" />

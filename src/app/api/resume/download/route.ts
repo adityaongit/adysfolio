@@ -20,7 +20,7 @@ export async function GET() {
         return new NextResponse(res.body, {
             headers: {
                 "Content-Type": "application/pdf",
-                "Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${filename}`,
+                "Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
                 "Cache-Control": "public, max-age=3600",
                 ...(contentLength && { "Content-Length": contentLength }),
                 ...(etag && { ETag: etag }),

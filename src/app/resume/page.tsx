@@ -35,6 +35,7 @@ export const metadata: Metadata = buildMeta({
 
 export default function ResumePage() {
   const filename = getResumeFilename();
+  const downloadFilename = getResumeFilename(true);
 
   return (
     <>
@@ -57,6 +58,7 @@ export default function ResumePage() {
         <PdfViewer
           file="/api/resume"
           downloadHref="/api/resume/download"
+          downloadName={downloadFilename}
           aria-label={`Resume PDF: ${filename}`}
           loader={
             <div
