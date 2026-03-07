@@ -19,7 +19,7 @@ export const siteConfig = {
         "https://www.geeksforgeeks.org/profile/adysgfg?tab=activity",
     ] as const,
     resumeURL:
-        "https://github.com/user-attachments/files/25799257/Aditya_SWE_Resume_2YOE.pdf",
+        "https://github.com/adityaongit/resume/releases/latest/download/Aditya_SWE_Resume_2YOE.pdf",
     nav: [
         { href: "/blogs", label: "Blogs" },
         { href: "/resume", label: "Resume" },
