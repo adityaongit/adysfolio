@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { TypographySmall } from "@/components/ui/typography";
 import {
   IconBrandLinkedinFilled,
-  IconBrandTwitterFilled,
+  IconBrandX,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 
@@ -76,7 +76,7 @@ export function BlogPostNav({
             rel="noopener noreferrer"
             aria-label={`Share "${title}" on X (opens in new tab)`}
           >
-            <IconBrandTwitterFilled className="size-4" aria-hidden="true" />
+            <IconBrandX className="size-4" aria-hidden="true" />
           </a>
         </Button>
 

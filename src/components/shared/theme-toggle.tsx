@@ -36,16 +36,17 @@ export function ThemeToggle({ className, ...props }: ComponentProps<"div">) {
   const value = mounted ? theme : null;
 
   return (
-    <div
-      role="group"
-      aria-label="Theme selection"
-      className={cn(
-        "inline-flex items-center rounded-full border p-1 *:rounded-full",
-        className,
-      )}
-      data-theme-toggle=""
-      {...props}
-    >
+<div
+  role="group"
+  aria-label="Theme selection"
+  className={cn(
+    "inline-flex items-center rounded-full border p-1 *:rounded-full",
+    "w-fit", // Add width constraint
+    className,
+  )}
+  data-theme-toggle=""
+  {...props}
+>
       {full.map(([key, Icon, label]) => (
         <Button
           key={key}
