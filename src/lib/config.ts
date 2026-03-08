@@ -66,13 +66,22 @@ export const certifications = [
     },
 ] as const;
 
-export const projects = [
+export type Project = {
+    title: string;
+    description: string;
+    highlights: string[];
+    live: string | null;
+    github: string;
+    wip?: boolean;
+};
+
+export const projects: readonly Project[] = [
     {
-        title: "ColdCraft",
+        title: "PitchPad",
         description:
             "A cold outreach toolkit for job seekers — template management with variable substitution, AI-powered resume tailoring, and bulk email campaigns sent directly through your own Gmail account via OAuth.",
         highlights: ["Next.js", "MongoDB", "Gmail API", "LLMs", "Better Auth"],
-        live: null,
+        live: "https://pitchpad.vercel.app/",
         github: "https://github.com/adityaongit/cold-craft",
         wip: true,
     },

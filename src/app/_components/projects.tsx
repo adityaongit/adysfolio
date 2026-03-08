@@ -46,7 +46,7 @@ export function BuiltThings() {
             <article className="space-y-4" aria-label={project.title}>
               <div className="flex items-center gap-2">
                 <TypographyH3 className="text-xl">{project.title}</TypographyH3>
-                {"wip" in project && project.wip && (
+                {project.wip && (
                   <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-mono uppercase tracking-wider">
                     WIP
                   </Badge>
