@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   metadataBase: new URL(siteConfig.baseUrl),
+  verification: {
+    google: "raoATIK68dRpqbuNs0ZX2Z9FLbtb0B06EK8rBhykNng",
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -57,13 +60,6 @@ export default function Layout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="relative flex flex-col min-h-screen">
-        {process.env.NODE_ENV === "production" && (
-          <Script
-            src="https://cloud.umami.is/script.js"
-            data-website-id="dc8cb931-4a46-46d8-bf57-d3ddcd53fcdc"
-            strategy="afterInteractive"
-          />
-        )}
         <JsonLd type="person" />
         <JsonLd type="website" />
         <RootProvider>
