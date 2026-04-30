@@ -3,7 +3,8 @@ import { siteConfig } from "@/lib/config";
 
 export async function fetchResume() {
     const res = await fetch(siteConfig.resumeURL, {
-        next: { tags: ["resume"], revalidate: 3600 },
+        cache: "no-store",
+        next: { tags: ["resume"] },
     });
 
     if (!res.ok || !res.body) {
