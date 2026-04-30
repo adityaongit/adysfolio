@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         );
     }
 
-    revalidateTag("resume");
+    revalidateTag("resume", "max");
     revalidatePath("/api/resume");
     revalidatePath("/api/resume/download");
     revalidatePath("/resume");
