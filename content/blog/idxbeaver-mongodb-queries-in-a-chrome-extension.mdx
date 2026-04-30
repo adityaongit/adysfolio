@@ -1,0 +1,170 @@
+---
+title: "I Couldn't Import mingo Into a Chrome Extension. Here's What I Built Instead."
+description: IdxBeaver gives IndexedDB a MongoDB-style query language with index hints — but the matcher can't use a library, because it runs inside the inspected page's MAIN world. Here's the architecture that fell out of that constraint.
+date: 2026-05-01
+tags:
+  - chrome-extension
+  - typescript
+  - indexeddb
+  - performance
+  - architecture
+---
+
+import { TypographyMark } from "@/components/ui/typography";
+import { RoughDiagram } from "@/components/ui/rough-diagram";
+
+I wanted [IdxBeaver](https://chromewebstore.google.com/detail/dhffiackmepdmiceljgghbmkapfgfcag) — a Chrome DevTools extension for IndexedDB ([source](https://github.com/adityaongit/idxbeaver)) — to feel like a real database client. That meant a query language. Something like:
+
+```json
+{ "store": "users", "filter": { "age": { "$gte": 18 } }, "sort": { "createdAt": -1 }, "limit": 50 }
+```
+
+The obvious move was to pull in [mingo](https://github.com/kofrasa/mingo). It implements the entire MongoDB query and aggregation surface in TypeScript. Drop it in, point it at an array, done.
+
+I couldn't. And the reason had nothing to do with mingo and everything to do with where the matcher actually has to run.
+
+![IdxBeaver query view — MongoDB-style filter against an IndexedDB store](/blog/idxbeaver/query.webp)
+
+<RoughDiagram
+  direction="TB"
+  nodes={[
+    { id: "panel", label: "DevTools Panel\n(React UI)",     color: "blue"   },
+    { id: "sw",    label: "Service Worker\n(RPC router)",    color: "yellow" },
+    { id: "main",  label: "Inspected Page\nMAIN world",      color: "red"    },
+    { id: "idb",   label: "IndexedDB\n(per-origin)",         color: "purple" },
+  ]}
+  edges={[
+    { from: "panel", to: "sw",   label: "PanelMessage" },
+    { from: "sw",    to: "main", label: "executeScript" },
+    { from: "main",  to: "idb",  label: "openCursor" },
+  ]}
+/>
+
+## Why mingo Was Off the Table
+
+Chrome DevTools extensions don't get to touch the inspected page directly. The panel runs in its own context, the service worker runs in another, and the only way to reach the page's IndexedDB is through `chrome.scripting.executeScript`:
+
+```typescript
+const [{ result }] = await chrome.scripting.executeScript({
+  target: { tabId, frameIds: [frameId] },
+  world: "MAIN",
+  func: executeStorageRequest,
+  args: [request]
+});
+```
+
+Chrome takes that `func`, serializes it to a string, ships it across the process boundary, and re-parses it inside the page. Whatever the function references at module scope is gone. No imports. No closures. No `import mingo from "mingo"`.
+
+The matcher *has* to be self-contained inside that one function body.
+
+That left three options:
+
+1. **Inline mingo's bundle** as a string and `Function`-eval it inside the injected payload. Mingo's full build supports the entire MongoDB query and aggregation surface — overkill for the dozen operators an IndexedDB inspector actually needs, and it would bloat every `executeScript` call.
+2. **Pull every record back to the panel** and run mingo there. This kills the index-hint optimization (more on that below) and ships the whole store across the message boundary just to filter it.
+3. **Hand-roll the small subset I need** inline. Cheap, zero dependency cost in the injected payload, and the matcher sits right next to the cursor loop where it belongs.
+
+I went with (3).
+
+## What "Hand-Roll" Actually Looks Like
+
+The matcher is around 50 lines. It's recursive, it handles `$and` / `$or` / `$not` at the document level and `$eq` / `$ne` / `$gt` / `$gte` / `$lt` / `$lte` / `$in` / `$nin` / `$exists` / `$regex` at the field level, and that's it.
+
+```typescript
+const matchFieldExpr = (actual: unknown, expr: unknown): boolean => {
+  if (expr && typeof expr === "object" && !Array.isArray(expr)
+      && Object.keys(expr).some((k) => k.startsWith("$"))) {
+    for (const [op, val] of Object.entries(expr as Record<string, unknown>)) {
+      switch (op) {
+        case "$eq":  if (!deepEqual(actual, val)) return false; break;
+        case "$ne":  if (deepEqual(actual, val)) return false; break;
+        case "$gt":  if (!(compareScalars(actual, val) >  0)) return false; break;
+        case "$gte": if (!(compareScalars(actual, val) >= 0)) return false; break;
+        case "$lt":  if (!(compareScalars(actual, val) <  0)) return false; break;
+        case "$lte": if (!(compareScalars(actual, val) <= 0)) return false; break;
+        case "$in":  if (!Array.isArray(val) || !val.some((v) => deepEqual(actual, v))) return false; break;
+        case "$exists": if (Boolean(val) !== (actual !== undefined)) return false; break;
+        case "$regex": {
+          const re = val instanceof RegExp ? val : new RegExp(String(val), expr.$options ?? "");
+          if (typeof actual !== "string" || !re.test(actual)) return false;
+          break;
+        }
+        default: return false;
+      }
+    }
+    return true;
+  }
+  return deepEqual(actual, expr);
+};
+```
+
+It's not impressive. It just works, and it lives in the same file as the IDB cursor loop, which is the entire point.
+
+## The Index Hint That Mingo-Over-The-Wire Would Have Killed
+
+IndexedDB has real indexes. If a store has an index on `age` and the query filters by `age`, scanning the whole store and filtering in memory is wasteful — we should ask IDB for a key range and let it walk only the matching slice.
+
+<RoughDiagram
+  direction="TB"
+  nodes={[
+    { id: "q",      label: "Parsed Query",                  color: "blue"   },
+    { id: "scan",   label: "Indexable single-field?",       shape: "diamond", color: "yellow" },
+    { id: "range",  label: "IDBKeyRange.bound / only",      color: "green"  },
+    { id: "full",   label: "Full store cursor",             color: "orange" },
+    { id: "match",  label: "matchFilter() per record",      color: "red"    },
+    { id: "rows",   label: "Rows to panel",                 color: "purple" },
+  ]}
+  edges={[
+    { from: "q",     to: "scan" },
+    { from: "scan",  to: "range", label: "yes" },
+    { from: "scan",  to: "full",  label: "no" },
+    { from: "range", to: "match" },
+    { from: "full",  to: "match" },
+    { from: "match", to: "rows" },
+  ]}
+/>
+
+Before opening the cursor, the injected function inspects the filter for single-field equality or range expressions and tries to translate them into an `IDBKeyRange`:
+
+```typescript
+let indexName: string | null = null;
+let range: IDBKeyRange | undefined;
+
+const indexableKeys = Object.keys(filter).filter((k) => !k.startsWith("$"));
+if (indexableKeys.length === 1) {
+  const field = indexableKeys[0];
+  if (Array.from(store.indexNames).includes(field)) {
+    const expr = filter[field];
+    if (expr && typeof expr === "object") {
+      const e = expr as Record<string, unknown>;
+      if (hasScalar(e.$eq))                            { indexName = field; range = IDBKeyRange.only(e.$eq); }
+      else if (hasScalar(e.$gte) && hasScalar(e.$lte)) { indexName = field; range = IDBKeyRange.bound(e.$gte, e.$lte, false, false); }
+      else if (hasScalar(e.$gt))                       { indexName = field; range = IDBKeyRange.lowerBound(e.$gt, true); }
+      else if (hasScalar(e.$lte))                      { indexName = field; range = IDBKeyRange.upperBound(e.$lte); }
+      // ...
+    }
+  }
+}
+
+const source: IDBObjectStore | IDBIndex = indexName ? store.index(indexName) : store;
+const cursorRequest = source.openCursor(range);
+```
+
+This is the part that pulling rows back to the panel would have destroyed. If the filter happens panel-side, we've already paid to scan and serialize every record. The index becomes pointless.
+
+<TypographyMark>The matcher had to live next to the cursor not because it was elegant, but because the alternative made the data structure underneath irrelevant.</TypographyMark>
+
+The compound or operator-heavy parts of the filter that *can't* be translated into an `IDBKeyRange` still get evaluated in memory by `matchFilter` — but only over the slice the index already narrowed down.
+
+## What I'd Do Differently
+
+The hand-rolled matcher was the right call, but the boundary between "what the matcher supports" and "what `parseMongoQuery` validates" drifted twice during development, and both times the symptom was a query that parsed and then silently returned nothing. I'd centralize the operator list as a single source of truth and have the parser reject anything the matcher can't handle, instead of letting it fall through to `default: return false`.
+
+The index-hint logic only fires for single-field filters. Compound `$and` queries on two indexed fields could in principle use a multi-entry index or a primary-key range plus a secondary filter pass, and right now they don't. It hasn't mattered yet — IndexedDB stores in a browser usually fit in memory — but it's the obvious next place to spend effort if a real workload pushes on it.
+
+## The Broader Lesson
+
+The constraint that looked like a problem — "I can't use a library here" — turned out to be the constraint that produced the better architecture. Pulling rows panel-side to filter them with mingo would have been the easy version. It would also have made every IDB index in every store I ever queried completely irrelevant.
+
+The right place to filter is next to the data. In a Chrome extension that's a serialized function in the inspected page's MAIN world, and it's where the matcher had to live whether I liked it or not.
+
+If you want to poke at it, IdxBeaver is on the [Chrome Web Store](https://chromewebstore.google.com/detail/dhffiackmepdmiceljgghbmkapfgfcag) and the source is on [GitHub](https://github.com/adityaongit/idxbeaver).
