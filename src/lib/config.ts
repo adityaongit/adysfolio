@@ -77,6 +77,14 @@ export type Project = {
 
 export const projects: readonly Project[] = [
     {
+        title: "IdxBeaver",
+        description:
+            "A Chrome DevTools extension that turns IndexedDB into a real database client — MongoDB-style queries with index hints, schema inference, grid editing with undo/redo, and multi-format import/export. Published on the Chrome Web Store.",
+        highlights: ["Chrome Extension", "TypeScript", "React", "IndexedDB", "CodeMirror", "Vite"],
+        live: "https://indexbeaver.vercel.app",
+        github: "https://github.com/adityaongit/idxbeaver",
+    },
+    {
         title: "PitchPad",
         description:
             "A cold outreach toolkit for job seekers — template management with variable substitution, AI-powered resume tailoring, and bulk email campaigns sent directly through your own Gmail account via OAuth.",
