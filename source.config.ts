@@ -21,6 +21,44 @@ export const docs = defineDocs({
     },
 });
 
+export const projectsDocs = defineDocs({
+    dir: "content/projects",
+    docs: {
+        schema: pageSchema.extend({
+            tagline: z.string(),
+            tags: z.array(z.string()).default([]),
+            live: z.string().nullable().default(null),
+            github: z.string(),
+            wip: z.boolean().optional(),
+            order: z.number().optional(),
+            logo: z.string().optional(),
+            brandIcon: z.string().optional(),
+        }),
+    },
+    meta: {
+        schema: metaSchema,
+    },
+});
+
+export const experienceDocs = defineDocs({
+    dir: "content/experience",
+    docs: {
+        schema: pageSchema.extend({
+            company: z.string(),
+            role: z.string(),
+            period: z.string(),
+            location: z.string(),
+            tags: z.array(z.string()).default([]),
+            order: z.number().optional(),
+            logo: z.string().optional(),
+            brandIcon: z.string().optional(),
+        }),
+    },
+    meta: {
+        schema: metaSchema,
+    },
+});
+
 export default defineConfig({
     plugins: [lastModified()],
     mdxOptions: {

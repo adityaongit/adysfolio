@@ -1,0 +1,30 @@
+---
+title: Soteira
+description: Real-time video inference engine that responds to natural-language prompts on CPU.
+tagline: Real-time video Q&A in ~150ms, entirely on CPU.
+tags:
+  - Python
+  - OpenCV
+  - YOLO
+  - LLMs
+  - ML
+live: null
+github: https://github.com/adityaongit/soteira
+order: 3
+brandIcon: python
+---
+
+## What it is
+
+A real-time video inference engine that responds to natural-language prompts. Point it at a video stream, ask "is anyone wearing a helmet?" or "is the door open?", and get an answer in ~150ms — running entirely on CPU.
+
+## Why I built it
+
+Most "ask your video" demos require a GPU and a pipeline that costs more to run than the data is worth. The interesting question was: how far can you push CPU-only inference if you compose a fast object-detection backbone with a thin LLM head that only sees the structured detection output, never the raw frames?
+
+## What's inside
+
+- **YOLO** as the detection backbone — fast enough on CPU when batched.
+- **OpenCV** for stream ingestion and frame sampling.
+- **LLM head** that consumes structured detection summaries (not pixels) so prompt-to-answer latency stays bounded.
+- **~150ms end-to-end** measured on a laptop CPU; numbers vary with stream resolution and prompt complexity.

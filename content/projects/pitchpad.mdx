@@ -1,0 +1,31 @@
+---
+title: PitchPad
+description: Cold outreach toolkit for job seekers with AI-powered resume tailoring and bulk Gmail sends.
+tagline: AI-powered cold outreach for job seekers, sent through your own Gmail.
+tags:
+  - Next.js
+  - MongoDB
+  - Gmail API
+  - LLMs
+  - Better Auth
+live: https://pitchpad.vercel.app/
+github: https://github.com/adityaongit/cold-craft
+wip: true
+order: 2
+logo: /logos/projects/pitchpad.svg
+---
+
+## What it is
+
+A cold outreach toolkit for job seekers. Template management with variable substitution, AI-powered resume tailoring per role, and bulk email campaigns sent directly through your own Gmail account via OAuth — so emails come from you, not a generic mailer.
+
+## Why I built it
+
+Most "cold email" tools either send through a sketchy SMTP relay (terrible deliverability) or charge $50/month to do something Gmail itself supports for free. PitchPad sits on top of your real Gmail account, uses your real domain, and just orchestrates the templating, the AI personalization, and the send queue.
+
+## What's inside
+
+- **Variable templates** with per-recipient substitution.
+- **AI resume tailoring** that rewrites bullet points to match the role description.
+- **OAuth-only Gmail send** — no SMTP credentials, no shadow infrastructure.
+- **Better Auth** for user accounts; **MongoDB** for templates + send history.

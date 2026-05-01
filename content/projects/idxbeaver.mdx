@@ -1,0 +1,32 @@
+---
+title: IdxBeaver
+description: Chrome DevTools extension that turns IndexedDB into a real database client.
+tagline: IndexedDB as a real database client — Mongo-style queries, schema inference, undo/redo.
+tags:
+  - Chrome Extension
+  - TypeScript
+  - React
+  - IndexedDB
+  - CodeMirror
+  - Vite
+live: https://indexbeaver.vercel.app
+github: https://github.com/adityaongit/idxbeaver
+order: 1
+logo: /logos/projects/idxbeaver.png
+---
+
+## What it is
+
+A Chrome DevTools extension that turns IndexedDB into a real database client. MongoDB-style queries with index hints, schema inference, grid editing with undo/redo, and multi-format import/export. Published on the Chrome Web Store.
+
+## Why I built it
+
+The default IndexedDB inspector in Chrome DevTools is a glorified key-value table viewer. If you actually use IndexedDB in a serious app — caches, offline state, large client-side datasets — you end up writing throwaway scripts in the console just to ask "how many records have field X greater than 100?" That friction is wrong. IndexedDB is a real database. It deserves a real client.
+
+## What's inside
+
+- **Mongo-style query language** that compiles to IDB cursor walks with index hints.
+- **Schema inference** by sampling — no manual setup; open a store and it figures out the shape.
+- **Editable grid** with undo/redo on top of IDB transactions.
+- **Multi-format import/export** (JSON, CSV, NDJSON) so you can move data in and out without writing a script.
+- **TanStack Table** powering the headless grid for sortable / virtualized rows.

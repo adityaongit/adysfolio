@@ -23,6 +23,7 @@ export const siteConfig = {
         "https://github.com/adityaongit/resume/releases/latest/download/Aditya_SWE_Resume_2YOE.pdf",
     nav: [
         { href: "/blogs", label: "Blogs" },
+        { href: "/certifications", label: "Certifications" },
         { href: "/resume", label: "Resume" },
     ] as const,
     social: [
@@ -58,63 +59,81 @@ export const certifications = [
         url: "https://www.coursera.org/account/accomplishments/professional-cert/3V2Q2RD4X7NG",
     },
     {
+        id: "computer-vision-mathworks",
+        name: "Computer Vision",
+        issuer: "MathWorks",
+        year: "Aug 2023",
+        url: "https://www.coursera.org/account/accomplishments/specialization/certificate/ARUUGQ6N2LEG",
+    },
+    {
+        id: "data-mining-iitkgp",
+        name: "Data Mining",
+        issuer: "IIT Kharagpur",
+        year: "May 2023",
+        url: "https://drive.google.com/file/d/1MiZEoeUe83GNy9ELWP_dT_i7v9OF4TT-/view?usp=sharing",
+    },
+    {
         id: "gcp-ace",
-        name: "Google Associate Cloud Engineer",
-        issuer: "Google Cloud",
-        year: "2023",
+        name: "Associate Cloud Engineer (Learning Path)",
+        issuer: "Google Cloud Skills Boost",
+        year: "Apr 2023",
         url: "https://drive.google.com/file/d/1AAtIxFsjt6rqrTe52p9mTzh7wxzh2sQR/view",
+    },
+    {
+        id: "google-tech-support",
+        name: "Technical Support Fundamentals",
+        issuer: "Google",
+        year: "Jan 2023",
+        url: "https://www.coursera.org/account/accomplishments/certificate/N9ADLTKK2NWX",
+    },
+    {
+        id: "software-testing-iiitb",
+        name: "Software Testing",
+        issuer: "IIIT Bangalore",
+        year: "Nov 2022",
+        url: "https://archive.nptel.ac.in/noc/Ecertificate/?q=NPTEL22CS61S10467220610054809",
+    },
+    {
+        id: "angular-infosys",
+        name: "Angular",
+        issuer: "Infosys Springboard",
+        year: "Sep 2022",
+        url: "https://infyspringboard.onwingspan.com/public-assets/infosysheadstart/cert/lex_20858515543254600000_shared/1-e84d5437-419f-4b51-81e0-ef0bd37582bd.pdf",
+    },
+    {
+        id: "typescript-infosys",
+        name: "TypeScript Essentials",
+        issuer: "Infosys Springboard",
+        year: "Sep 2022",
+        url: "https://infyspringboard.onwingspan.com/public-assets/infosysheadstart/cert/lex_auth_0127562264098324481391_shared/1-d8bc604b-b3dc-40d0-94d2-e57bc06f6b35.pdf",
+    },
+    {
+        id: "node-express-mongo-hkust",
+        name: "Server-side Development with NodeJS, Express and MongoDB",
+        issuer: "HKUST",
+        year: "Mar 2022",
+        url: "https://www.coursera.org/account/accomplishments/certificate/HXWE6GC34VAJ",
+    },
+    {
+        id: "java-basic-hackerrank",
+        name: "Java (Basic)",
+        issuer: "HackerRank",
+        year: "Feb 2022",
+        url: "https://www.hackerrank.com/certificates/90caf9b3b2e4",
+    },
+    {
+        id: "angular-hkust",
+        name: "Front-End JavaScript Frameworks: Angular",
+        issuer: "HKUST",
+        year: "Dec 2021",
+        url: "https://www.coursera.org/account/accomplishments/certificate/KNLYGL4KHLDV",
+    },
+    {
+        id: "html-css-js-jhu",
+        name: "HTML, CSS, and JavaScript for Web Developers",
+        issuer: "Johns Hopkins University",
+        year: "Mar 2021",
+        url: "https://www.coursera.org/account/accomplishments/certificate/PSVMZRYK4YXY",
     },
 ] as const;
 
-export type Project = {
-    title: string;
-    description: string;
-    highlights: string[];
-    live: string | null;
-    github: string;
-    wip?: boolean;
-};
-
-export const projects: readonly Project[] = [
-    {
-        title: "IdxBeaver",
-        description:
-            "A Chrome DevTools extension that turns IndexedDB into a real database client — MongoDB-style queries with index hints, schema inference, grid editing with undo/redo, and multi-format import/export. Published on the Chrome Web Store.",
-        highlights: ["Chrome Extension", "TypeScript", "React", "IndexedDB", "CodeMirror", "Vite"],
-        live: "https://indexbeaver.vercel.app",
-        github: "https://github.com/adityaongit/idxbeaver",
-    },
-    {
-        title: "PitchPad",
-        description:
-            "A cold outreach toolkit for job seekers — template management with variable substitution, AI-powered resume tailoring, and bulk email campaigns sent directly through your own Gmail account via OAuth.",
-        highlights: ["Next.js", "MongoDB", "Gmail API", "LLMs", "Better Auth"],
-        live: "https://pitchpad.vercel.app/",
-        github: "https://github.com/adityaongit/cold-craft",
-        wip: true,
-    },
-    {
-        title: "Soteira",
-        description:
-            "A real-time video inference engine that responds to natural-language prompts. Point it at a stream, ask what's happening, get an answer in ~150ms — running entirely on CPU.",
-        highlights: ["Python", "OpenCV", "YOLO", "LLMs", "ML"],
-        live: null,
-        github: "https://github.com/adityaongit/soteira",
-    },
-    {
-        title: "SplitWatt",
-        description:
-            "An open-source electricity bill splitter that handles the math nobody wants to do — submeter-based cost splitting, UPI integration, and a Lighthouse 100 score across all four categories.",
-        highlights: ["Next.js", "Better Auth", "TypeScript", "Umami"],
-        live: "https://splitwatt.vercel.app/",
-        github: "https://github.com/adityaongit/electricity-bill-split",
-    },
-    {
-        title: "Pair Code",
-        description:
-            "A collaborative coding environment where teams write and run code together in real time. Built-in compiler, multi-language support, and no setup required — just share a link and start.",
-        highlights: ["Node.js", "WebSockets", "React.js"],
-        live: "https://paircode-dev.vercel.app/",
-        github: "https://github.com/adityaongit/paircode",
-    },
-];
