@@ -4,7 +4,6 @@ import { Divider } from "@/components/ui/divider";
 import { SectionLabel, TypographyMuted, TypographySmall } from "@/components/ui/typography";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { certifications } from "@/lib/config";
 import type { ReactNode } from "react";
 
 const baseHighlights: (string | ReactNode)[] = [
@@ -19,16 +18,13 @@ const baseHighlights: (string | ReactNode)[] = [
       GeeksforGeeks
     </Link>
   </>,
-];
-
-const certHighlights = certifications.map((cert) => (
   <>
-    <Link key={cert.id} href={cert.url} className="underline hover:text-foreground/80 transition-colors" target="_blank" rel="noopener noreferrer">
-      {cert.name}
-    </Link>
-    {" "}– {cert.issuer}, {cert.year}
-  </>
-));
+    Continued learning on{" "}
+    <Link href="/certifications" className="underline hover:text-foreground/80 transition-colors">
+      certifications
+    </Link>{" "}— AWS, Google Cloud, and more.
+  </>,
+];
 
 const education = [
   {
@@ -36,7 +32,7 @@ const education = [
     degree: "BE in Computer Science & Engineering",
     period: "2020 – 2024",
     location: "Chandigarh, India",
-    highlights: [...baseHighlights, ...certHighlights],
+    highlights: baseHighlights,
     tags: ["Computer Science", "Engineering", "Alumni"],
   },
 ];
