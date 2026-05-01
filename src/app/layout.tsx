@@ -8,23 +8,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/lib/config";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "./global.css";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-plus-jakarta-sans",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-geist-mono",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -54,11 +41,15 @@ export const viewport: Viewport = {
 
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${plusJakartaSans.className} ${geistMono.className} antialiased`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className="antialiased" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Google+Sans+Code:ital,wght,MONO@0,300..800,1;1,300..800,1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="relative flex flex-col min-h-screen">
         <JsonLd type="person" />
         <JsonLd type="website" />

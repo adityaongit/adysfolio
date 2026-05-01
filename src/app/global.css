@@ -7,6 +7,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans:
+    "Google Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Google Sans Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-plus-jakarta-sans: var(--font-sans);
+  --font-geist-mono: var(--font-mono);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -156,11 +161,25 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
+  body {
+    font-family: var(--font-sans);
+  }
   body {
     @apply bg-background text-foreground;
     cursor:
       url("/cursors/default.cur") 4 4,
       auto;
+    letter-spacing: -0.005em;
+  }
+
+  /* Mono callouts (dates, badges, terminal labels, code) use Google Sans Code. */
+  code,
+  kbd,
+  samp,
+  pre,
+  .font-mono {
+    font-family: var(--font-mono);
   }
 
   *:where(a, button, [role="button"], .cursor-pointer) {
