@@ -1,4 +1,4 @@
-Source code for [adysfolio.vercel.app](https://adysfolio.vercel.app) — a personal portfolio and blog. Built with Next.js 16, Fumadocs, and a slightly over-engineered PDF viewer.
+Source code for [aditya.portlabs.in](https://aditya.portlabs.in) — a personal portfolio and blog. Built with Next.js 16, Fumadocs, and a slightly over-engineered PDF viewer.
 
 ---
 
@@ -48,7 +48,7 @@ All env vars are optional for local development:
 
 ```env
 # Optional — base URL override. Auto-detected from Vercel env otherwise.
-NEXT_PUBLIC_BASE_URL=https://adysfolio.vercel.app
+NEXT_PUBLIC_BASE_URL=https://aditya.portlabs.in
 ```
 
 ---

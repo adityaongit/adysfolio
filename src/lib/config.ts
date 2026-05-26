@@ -1,6 +1,6 @@
 export const siteConfig = {
     name: "Aditya Jindal",
-    domain: "adysfolio.vercel.app",
+    domain: "aditya.portlabs.in",
     role: "Software Engineer",
     roleAbbeviation: "SWE",
     email: "work.adityajindal@gmail.com",
@@ -136,4 +136,3 @@ export const certifications = [
         url: "https://www.coursera.org/account/accomplishments/certificate/PSVMZRYK4YXY",
     },
 ] as const;
-
