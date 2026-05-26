@@ -1,28 +1,36 @@
-import { Section, CardGrid, CardGridItem } from "@/components/layouts/page";
-import { Badge } from "@/components/ui/badge";
+import { Section } from "@/components/layouts/page";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/lib/logo";
 import {
   SectionLabel,
-  TypographyH3,
   TypographyLead,
   TypographyMark,
-  TypographyMuted,
 } from "@/components/ui/typography";
 import { projectsSource } from "@/lib/source";
 import {
-  IconArrowRight,
   IconArrowUpRight,
   IconBrandGithubFilled,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { ProjectsGrid } from "@/app/_components/projects-grid";
 
 export function BuiltThings() {
-  const projects = projectsSource.getPages().sort((a, b) => {
-    const ao = a.data.order ?? 999;
-    const bo = b.data.order ?? 999;
-    return ao - bo;
-  });
+  const projects = projectsSource
+    .getPages()
+    .sort((a, b) => {
+      const ao = a.data.order ?? 999;
+      const bo = b.data.order ?? 999;
+      return ao - bo;
+    })
+    .map((project) => ({
+      url: project.url,
+      slug: project.slugs[project.slugs.length - 1] ?? project.url,
+      title: project.data.title,
+      tagline: project.data.tagline,
+      tags: project.data.tags,
+      logo: project.data.logo,
+      brandIcon: project.data.brandIcon,
+      wip: project.data.wip,
+    }));
 
   return (
     <Section id="projects" aria-label="Things I've Built">
@@ -42,69 +50,7 @@ export function BuiltThings() {
         </TypographyLead>
       </div>
 
-      <CardGrid cols="grid-cols-1 md:grid-cols-2">
-        {projects.map((project) => (
-          <CardGridItem
-            key={project.url}
-            className="group transition-colors duration-300 hover:bg-muted/30 p-0"
-          >
-            <Link
-              href={project.url}
-              aria-label={`View details for ${project.data.title}`}
-              className="flex h-full flex-col gap-4 p-4 @sm:p-6 @lg:p-8"
-            >
-              <article className="flex h-full flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <Logo
-                    logo={project.data.logo}
-                    brandIcon={project.data.brandIcon}
-                    title={project.data.title}
-                    slug={project.slugs[project.slugs.length - 1] ?? project.url}
-                    size="card"
-                  />
-                  <TypographyH3 className="text-xl">
-                    {project.data.title}
-                  </TypographyH3>
-                  {project.data.wip && (
-                    <Badge
-                      variant="secondary"
-                      className="text-[10px] px-1.5 py-0 font-mono uppercase tracking-wider"
-                    >
-                      WIP
-                    </Badge>
-                  )}
-                </div>
-
-                <TypographyMuted className="leading-relaxed">
-                  {project.data.tagline}
-                </TypographyMuted>
-
-                <ul
-                  role="list"
-                  aria-label="Technologies used"
-                  className="flex flex-wrap gap-2 pt-1"
-                >
-                  {project.data.tags.slice(0, 4).map((tag) => (
-                    <li key={tag}>
-                      <Badge variant="outline" className="text-xs px-2 py-0.5">
-                        {tag}
-                      </Badge>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-auto flex items-center gap-1.5 pt-2 text-xs font-mono text-muted-foreground transition-colors group-hover:text-foreground">
-                  <span>Read more</span>
-                  <IconArrowRight
-                    className="size-3.5 transition-transform group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </div>
-              </article>
-            </Link>
-          </CardGridItem>
-        ))}
-      </CardGrid>
+      <ProjectsGrid projects={projects} />
 
       <div className="mt-16 flex flex-col items-center gap-6 text-center">
         <TypographyLead className="max-w-2xl">

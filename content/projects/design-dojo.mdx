@@ -1,0 +1,32 @@
+---
+title: DesignDojo
+description: Free BYOK system design and low-level design interview practice with AI feedback.
+tagline: BYOK system design and LLD practice with AI feedback and local-model support.
+tags:
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+  - Excalidraw
+  - IndexedDB
+  - LLMs
+live: https://designdojo.portlabs.in/
+github: https://github.com/adityaongit/design-dojo
+order: 3
+logo: /logos/projects/design-dojo.svg
+---
+
+## What it is
+
+An open-source practice platform for system design and low-level design interviews. It walks users through interview-style stages, gives AI-generated feedback against a published rubric, and lets them bring their own AI key or run a local model.
+
+## Why I built it
+
+Most system design practice tools put the feedback loop behind an expensive subscription. The underlying interview framework is public knowledge, but students still need structured questions, stage-by-stage guidance, and fast critique. DesignDojo keeps that loop free by moving the model choice and usage cost to the user.
+
+## What's inside
+
+- **System design and LLD runners** with stage definitions, prompts, and rubric-based feedback.
+- **BYOK model support** for OpenAI-compatible providers, Anthropic, Gemini, OpenRouter, Groq, Together, Ollama, LM Studio, and vLLM.
+- **Excalidraw whiteboard** for diagramming during practice sessions.
+- **Local-first session storage** with IndexedDB, so practice state stays in the browser.
+- **Zod-validated content and AI output** for question schemas, framework definitions, and structured feedback.
