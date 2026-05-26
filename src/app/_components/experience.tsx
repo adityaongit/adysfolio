@@ -7,6 +7,7 @@ import {
   TypographyMuted,
   TypographySmall,
 } from "@/components/ui/typography";
+import { Logo } from "@/lib/logo";
 import { experienceSource } from "@/lib/source";
 import Link from "next/link";
 
@@ -41,13 +42,22 @@ export function Experience() {
                 aria-label={`View details for ${exp.data.company}`}
                 className="w-full flex items-center justify-between gap-4 py-6 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
               >
-                <div className="flex flex-col gap-0.5 min-w-0">
-                  <span className="font-semibold text-base text-foreground transition-colors truncate">
-                    {exp.data.company}
-                  </span>
-                  <TypographyMuted className="text-sm font-normal">
-                    {exp.data.role}
-                  </TypographyMuted>
+                <div className="flex min-w-0 items-center gap-3">
+                  <Logo
+                    logo={exp.data.logo}
+                    brandIcon={exp.data.brandIcon}
+                    title={exp.data.company}
+                    slug={exp.slugs[exp.slugs.length - 1] ?? exp.url}
+                    size="card"
+                  />
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <span className="font-semibold text-base text-foreground transition-colors truncate">
+                      {exp.data.company}
+                    </span>
+                    <TypographyMuted className="text-sm font-normal">
+                      {exp.data.role}
+                    </TypographyMuted>
+                  </div>
                 </div>
                 <div className="flex items-center gap-4 shrink-0">
                   <div className="hidden sm:flex flex-col items-end gap-0.5">

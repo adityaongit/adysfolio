@@ -3,6 +3,7 @@ import { DecorIcon } from "@/components/ui/border";
 import { Divider } from "@/components/ui/divider";
 import { SectionLabel, TypographyMuted, TypographySmall } from "@/components/ui/typography";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -32,6 +33,7 @@ const education = [
     degree: "BE in Computer Science & Engineering",
     period: "2020 – 2024",
     location: "Chandigarh, India",
+    logo: "/logos/education/chandigarh-university-logo.png",
     highlights: baseHighlights,
     tags: ["Computer Science", "Engineering", "Alumni"],
   },
@@ -56,13 +58,24 @@ export function Education() {
               <DecorIcon position="bottom-right" />
               <div className="py-6 space-y-4">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-                    <span className="font-semibold text-base text-foreground">
-                      {edu.institution}
-                    </span>
-                    <TypographyMuted className="text-sm font-normal">
-                      {edu.degree}
-                    </TypographyMuted>
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <div className="relative flex size-14 shrink-0 items-center justify-center border border-border bg-background p-2">
+                      <Image
+                        src={edu.logo}
+                        alt={`${edu.institution} logo`}
+                        width={64}
+                        height={64}
+                        className="size-full object-contain"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                      <span className="font-semibold text-base text-foreground">
+                        {edu.institution}
+                      </span>
+                      <TypographyMuted className="text-sm font-normal">
+                        {edu.degree}
+                      </TypographyMuted>
+                    </div>
                   </div>
                   <div className="hidden sm:flex flex-col items-end gap-0.5 shrink-0">
                     <TypographySmall className="font-mono tabular-nums text-muted-foreground">
