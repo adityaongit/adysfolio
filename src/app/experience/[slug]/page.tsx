@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   TypographyH1,
+  TypographyMark,
   TypographyMuted,
   TypographySmall,
 } from "@/components/ui/typography";
@@ -42,7 +43,21 @@ export default async function ExperiencePage(props: {
         <div className="flex items-start justify-between gap-6">
           <div className="flex min-w-0 flex-col gap-2">
             <TypographyH1 className="leading-tight">
-              {page.data.company}
+              {page.data.website ? (
+                <TypographyMark asChild>
+                  <a
+                    href={page.data.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    aria-label={`Visit ${page.data.company} website`}
+                  >
+                    {page.data.company}
+                  </a>
+                </TypographyMark>
+              ) : (
+                page.data.company
+              )}
             </TypographyH1>
             <TypographyMuted className="text-base">
               {page.data.role}
@@ -58,7 +73,7 @@ export default async function ExperiencePage(props: {
         </div>
 
         <div
-          className="flex flex-wrap items-center gap-x-4 gap-y-1.5"
+          className="flex flex-col gap-4"
           aria-label="Role metadata"
         >
           <TypographyMuted className="font-mono text-xs flex items-center gap-1.5">

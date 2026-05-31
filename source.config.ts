@@ -48,6 +48,7 @@ export const experienceDocs = defineDocs({
             role: z.string(),
             period: z.string(),
             location: z.string(),
+            website: z.string().url().optional(),
             tags: z.array(z.string()).default([]),
             order: z.number().optional(),
             logo: z.string().optional(),
