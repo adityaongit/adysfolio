@@ -6,6 +6,7 @@ import {
   ButtonGroupSeparator,
 } from "@/components/ui/button-group";
 import { Section, Card } from "@/components/layouts/page";
+import { ExperienceCounter } from "@/components/ui/experience-counter";
 import { siteConfig } from "@/lib/config";
 import {
   TypographyH1,
@@ -26,12 +27,15 @@ export function Hero() {
 
       <div className="w-full max-w-5xl flex flex-col gap-6">
         <Card className="@sm:p-8 flex flex-col gap-8 bg-background/80 backdrop-blur-md">
-          <div className="space-y-4">
-            <TypographyH1>{siteConfig.name}</TypographyH1>
-            <TypographyMuted aria-label={`Role: ${siteConfig.role}`}>
-              {siteConfig.role}
-            </TypographyMuted>
-            <LocationTag />
+          <div className="flex flex-col gap-6 @lg:flex-row @lg:items-start @lg:justify-between">
+            <div className="space-y-4">
+              <TypographyH1>{siteConfig.name}</TypographyH1>
+              <TypographyMuted aria-label={`Role: ${siteConfig.role}`}>
+                {siteConfig.role}
+              </TypographyMuted>
+              <LocationTag />
+            </div>
+            <ExperienceCounter className="@lg:mt-1" />
           </div>
 
           <TypographyLead>
