@@ -1,3 +1,4 @@
+import { AccentToggle } from "@/components/shared/accent-toggle";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { DecorIcon, FullWidthDivider } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
@@ -89,10 +90,10 @@ export function Footer() {
                   </Button>
                 ))}
               </nav>
-              <ThemeToggle
-                aria-label="Toggle theme"
-                className="md:self-end"
-              />
+              <div className="flex items-center gap-2 md:self-end">
+                <AccentToggle aria-label="Accent color" />
+                <ThemeToggle aria-label="Toggle theme" />
+              </div>
             </div>
           </div>
 

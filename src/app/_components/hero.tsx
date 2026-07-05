@@ -6,6 +6,7 @@ import {
   ButtonGroupSeparator,
 } from "@/components/ui/button-group";
 import { Section, Card } from "@/components/layouts/page";
+import { OrbitalDecor } from "@/components/shared/orbital-decor";
 import { ExperienceCounter } from "@/components/ui/experience-counter";
 import { siteConfig } from "@/lib/config";
 import {
@@ -20,6 +21,7 @@ import { LocationTag } from "@/components/ui/location";
 export function Hero() {
   return (
     <Section variant="hero" aria-label="Introduction">
+      <OrbitalDecor className="-top-20 -right-24 size-104 opacity-60 sm:opacity-100 sm:-top-24 sm:-right-16" />
       <div className="flex items-center gap-3 mb-6" aria-hidden="true">
         <SectionLabel>Who am I?</SectionLabel>
         <div className="flex-1 h-px bg-border/40" />

@@ -1,4 +1,5 @@
 import { Section } from "@/components/layouts/page";
+import { OrbitalDecor } from "@/components/shared/orbital-decor";
 import { Button } from "@/components/ui/button";
 import {
   SectionLabel,
@@ -34,6 +35,10 @@ export function BuiltThings() {
 
   return (
     <Section id="projects" aria-label="Things I've Built">
+      <OrbitalDecor
+        variant="duo"
+        className="-left-40 top-16 size-96 sm:-left-28"
+      />
       <h2 className="sr-only">Things I&apos;ve Built</h2>
       <div className="flex items-center gap-3 mb-10" aria-hidden="true">
         <SectionLabel>Things I've Built</SectionLabel>

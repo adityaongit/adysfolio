@@ -1,6 +1,6 @@
 "use client";
 
-import { LogoLoader } from "@/components/shared/loader";
+import { OrbitalLoader } from "@/components/shared/orbital-mark";
 
 export default function Loading() {
   return (
@@ -10,7 +10,7 @@ export default function Loading() {
       aria-label="Loading"
       aria-live="polite"
     >
-      <LogoLoader className="text-foreground" />
+      <OrbitalLoader className="text-foreground" />
     </div>
   );
 }

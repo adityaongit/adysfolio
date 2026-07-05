@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { IconMail, IconArrowUpRight } from "@tabler/icons-react";
 import { Section, Card } from "@/components/layouts/page";
+import { OrbitalDecor } from "@/components/shared/orbital-decor";
 import {
   TypographyH2,
   TypographyLead,
@@ -23,6 +24,7 @@ import { Fragment } from "react";
 export function Contact() {
   return (
     <Section aria-label="Contact" id="contact">
+      <OrbitalDecor className="-bottom-24 -left-40 size-80 md:size-96 md:-left-32" />
       <div className="flex items-center gap-3 mb-10" aria-hidden="true">
         <SectionLabel>Contact</SectionLabel>
         <div className="flex-1 h-px bg-border/40" />

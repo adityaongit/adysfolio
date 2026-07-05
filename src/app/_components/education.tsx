@@ -1,4 +1,5 @@
 import { Section } from "@/components/layouts/page";
+import { OrbitalDecor } from "@/components/shared/orbital-decor";
 import { DecorIcon } from "@/components/ui/border";
 import { Divider } from "@/components/ui/divider";
 import { SectionLabel, TypographyMuted, TypographySmall } from "@/components/ui/typography";
@@ -42,6 +43,10 @@ const education = [
 export function Education() {
   return (
     <Section aria-label="Education">
+      <OrbitalDecor
+        variant="duo"
+        className="-left-36 -top-10 size-80 sm:-left-24"
+      />
       <h2 className="sr-only">Education</h2>
       <div className="flex items-center gap-3" aria-hidden="true">
         <SectionLabel>Education</SectionLabel>

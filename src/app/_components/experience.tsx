@@ -1,5 +1,6 @@
 import { IconArrowRight } from "@tabler/icons-react";
 import { Section } from "@/components/layouts/page";
+import { OrbitalDecor } from "@/components/shared/orbital-decor";
 import { DecorIcon } from "@/components/ui/border";
 import { Divider } from "@/components/ui/divider";
 import {
@@ -20,6 +21,10 @@ export function Experience() {
 
   return (
     <Section id="experience" aria-label="Experience">
+      <OrbitalDecor
+        variant="solo"
+        className="-right-36 top-1/4 size-80 sm:-right-28"
+      />
       <h2 className="sr-only">Experience</h2>
       <div className="flex items-center gap-3" aria-hidden="true">
         <SectionLabel>Experience</SectionLabel>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { Section, Card } from "@/components/layouts/page";
+import { OrbitalDecor } from "@/components/shared/orbital-decor";
 import {
   SectionLabel,
   TypographyH2,
@@ -12,6 +13,10 @@ import { Button } from "@/components/ui/button";
 export function BlogsCta() {
   return (
     <Section aria-label="Writing">
+      <OrbitalDecor
+        variant="solo"
+        className="-right-32 -bottom-20 size-72"
+      />
       <div className="flex items-center gap-3 mb-10" aria-hidden="true">
         <SectionLabel>Writing</SectionLabel>
         <div className="flex-1 h-px bg-border/40" />

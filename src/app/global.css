@@ -133,6 +133,37 @@
   --selection-fg: oklch(0.112 0.008 155);
 }
 
+/* Planetary accents — one hue per weekday's classical body, all sharing the
+   default green's tone (L 0.82, C 0.155) so only the hue rotates. */
+html[data-accent="sun"] {
+  --selection-bg: oklch(0.82 0.155 85);
+  --selection-fg: oklch(0.112 0.008 85);
+}
+html[data-accent="moon"] {
+  --selection-bg: oklch(0.82 0.155 255);
+  --selection-fg: oklch(0.112 0.008 255);
+}
+html[data-accent="mars"] {
+  --selection-bg: oklch(0.82 0.155 25);
+  --selection-fg: oklch(0.112 0.008 25);
+}
+html[data-accent="mercury"] {
+  --selection-bg: oklch(0.82 0.155 185);
+  --selection-fg: oklch(0.112 0.008 185);
+}
+html[data-accent="jupiter"] {
+  --selection-bg: oklch(0.82 0.155 55);
+  --selection-fg: oklch(0.112 0.008 55);
+}
+html[data-accent="venus"] {
+  --selection-bg: oklch(0.82 0.155 340);
+  --selection-fg: oklch(0.112 0.008 340);
+}
+html[data-accent="saturn"] {
+  --selection-bg: oklch(0.82 0.155 300);
+  --selection-fg: oklch(0.112 0.008 300);
+}
+
 @property --top-mask-height {
   syntax: "<length>";
   inherits: true;
@@ -312,4 +343,22 @@ main {
 ::selection {
   background-color: var(--selection-bg);
   color: var(--selection-fg);
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.orbit-group {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: orbit-spin var(--orbit-duration, 120s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-group {
+    animation: none;
+  }
 }

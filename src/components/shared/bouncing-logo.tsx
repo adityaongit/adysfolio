@@ -1,10 +1,10 @@
 "use client";
 
-import { Logo } from "@/components/shared/logo";
+import { OrbitalMark } from "@/components/shared/orbital-mark";
 import { useEffect, useRef } from "react";
 
 const LOGO_SIZE = 40;
-const LOGO_W = Math.round(((64 - 14) / 64) * LOGO_SIZE);
+const LOGO_W = LOGO_SIZE;
 
 type Instance = {
   x: number;
@@ -110,10 +110,10 @@ export function BouncingLogos({
           className={`pointer-events-none absolute ${opacity}`}
           style={{ willChange: "transform", top: 0, left: 0 }}
         >
-          <Logo
+          <OrbitalMark
             size={LOGO_SIZE}
+            duration={8 + (i % 4) * 3}
             className="text-foreground"
-            aria-hidden="true"
           />
         </div>
       ))}

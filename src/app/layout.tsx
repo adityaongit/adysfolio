@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { MouseGlow } from "@/components/shared/mouse-glow";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { accentInitScript } from "@/lib/accent";
 import { siteConfig } from "@/lib/config";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
@@ -48,6 +49,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="antialiased" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: accentInitScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link

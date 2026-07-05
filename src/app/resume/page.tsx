@@ -18,7 +18,7 @@ import {
   PdfViewerZoom,
 } from "@/components/ui/pdf-viewer";
 import { getResumeFilename } from "@/lib/resume";
-import { LogoLoader } from "@/components/shared/loader";
+import { OrbitalLoader } from "@/components/shared/orbital-mark";
 import { buildMeta } from "@/lib/og";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";
@@ -66,7 +66,7 @@ export default function ResumePage() {
               role="status"
               aria-label="Loading resume"
             >
-              <LogoLoader aria-hidden="true" />
+              <OrbitalLoader aria-hidden="true" />
             </div>
           }
         >

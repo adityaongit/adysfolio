@@ -27,28 +27,30 @@ function FlickerChar({
     <g aria-hidden="true">
       {asLogo ? (
         <g
-          transform={`translate(${logoX}, ${logoY}) scale(${logoScale}) translate(-14, 0)`}
+          transform={`translate(${logoX}, ${logoY}) scale(${logoScale}) translate(-7, 0)`}
         >
-          <polygon
-            points="32,4 48,60 40.5,60 32,14 23.5,60 16,60"
-            fill="currentColor"
+          <circle
+            cx="32"
+            cy="32"
+            r="22"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeDasharray="2 5"
+            fill="none"
+            opacity="0.55"
           />
-          <rect
-            x="18"
-            y="36"
-            width="11"
-            height="5"
-            rx="2.5"
-            fill="currentColor"
-          />
-          <rect
-            x="35"
-            y="36"
-            width="11"
-            height="5"
-            rx="2.5"
-            fill="currentColor"
-          />
+          <circle cx="32" cy="32" r="5" fill="currentColor" opacity="0.85" />
+          <g>
+            <circle cx="54" cy="32" r="4" fill="currentColor" />
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 32 32"
+              to="360 32 32"
+              dur="9s"
+              repeatCount="indefinite"
+            />
+          </g>
         </g>
       ) : (
         <text className="flicker-n" x={x} y="88">
@@ -103,7 +105,7 @@ export function FlickerText({
 }: FlickerTextProps) {
   const totalWidth = chars.length * charWidth;
   const resolvedLabel =
-    label ?? chars.map((c) => (c === "logo" ? "A" : c)).join("");
+    label ?? chars.map((c) => (c === "logo" ? "0" : c)).join("");
 
   return (
     <svg
