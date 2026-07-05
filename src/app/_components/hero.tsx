@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/button-group";
 import { Section, Card } from "@/components/layouts/page";
 import { OrbitalDecor } from "@/components/shared/orbital-decor";
-import { ExperienceCounter } from "@/components/ui/experience-counter";
 import { siteConfig } from "@/lib/config";
 import {
   TypographyH1,
@@ -29,15 +28,22 @@ export function Hero() {
 
       <div className="w-full max-w-5xl flex flex-col gap-6">
         <Card className="@sm:p-8 flex flex-col gap-8 bg-background/80 backdrop-blur-md">
-          <div className="flex flex-col gap-6 @lg:flex-row @lg:items-start @lg:justify-between">
-            <div className="space-y-4">
-              <TypographyH1>{siteConfig.name}</TypographyH1>
-              <TypographyMuted aria-label={`Role: ${siteConfig.role}`}>
-                {siteConfig.role}
-              </TypographyMuted>
-              <LocationTag />
-            </div>
-            <ExperienceCounter className="@lg:mt-1" />
+          <div className="space-y-4">
+            <TypographyH1>{siteConfig.name}</TypographyH1>
+            <TypographyMuted
+              aria-label={`Role: ${siteConfig.role}, over two years of experience since June 2023`}
+            >
+              {siteConfig.role}
+              <span aria-hidden="true"> · </span>
+              <span
+                aria-hidden="true"
+                className="font-mono text-xs tracking-wide"
+                title="since Jun 2023"
+              >
+                2+ yrs
+              </span>
+            </TypographyMuted>
+            <LocationTag />
           </div>
 
           <TypographyLead>
