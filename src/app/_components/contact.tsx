@@ -15,6 +15,7 @@ import {
   ButtonGroup,
   ButtonGroupSeparator,
 } from "@/components/ui/button-group";
+import { InstagramCard } from "@/components/ui/instagram-card";
 import { siteConfig } from "@/lib/config";
 import { getPlatformIcon } from "@/components/shared/platform-icons";
 import { Fragment } from "react";
@@ -30,22 +31,26 @@ export function Contact() {
       <div className="w-full max-w-5xl">
         <Card className="@lg:p-10">
           <div className="space-y-8">
-            <div className="space-y-4 max-w-2xl">
-              <TypographyH2 className="border-none pb-0">
-                Let's Build Something
-              </TypographyH2>
+            <div className="flex flex-col gap-8 @3xl:flex-row @3xl:items-center @3xl:justify-between">
+              <div className="space-y-4 max-w-2xl min-w-0">
+                <TypographyH2 className="border-none pb-0">
+                  Let's Build Something
+                </TypographyH2>
 
-              <TypographyLead>
-                If you're working on something ambitious and need an engineer
-                who builds with{" "}
-                <TypographyMark>clarity over chaos</TypographyMark>, we'll
-                probably get along.
-              </TypographyLead>
+                <TypographyLead>
+                  If you're working on something ambitious and need an engineer
+                  who builds with{" "}
+                  <TypographyMark>clarity over chaos</TypographyMark>, we'll
+                  probably get along.
+                </TypographyLead>
 
-              <TypographyMuted>
-                Open to full-time roles, collaborations, and projects that make
-                sense (or at least teach me something).
-              </TypographyMuted>
+                <TypographyMuted>
+                  Open to full-time roles, collaborations, and projects that
+                  make sense (or at least teach me something).
+                </TypographyMuted>
+              </div>
+
+              <InstagramCard className="shrink-0 @3xl:w-64" />
             </div>
 
             <nav aria-label="Contact links" className="pt-4">

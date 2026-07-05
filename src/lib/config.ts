@@ -21,6 +21,13 @@ export const siteConfig = {
     ] as const,
     resumeURL:
         "https://github.com/adityaongit/resume/releases/latest/download/Aditya_SWE_Resume_2YOE.pdf",
+    instagram: {
+        handle: "googlestudents",
+        postUrl: "https://www.instagram.com/p/CwC-3dnPjIc/",
+        image: "/instagram/google-office.jpg",
+        alt: "Aditya in front of the illuminated Google logo wall at the Google office in Bengaluru",
+        caption: "Google Bengaluru, summer 2023 — from my SWE internship.",
+    },
     nav: [
         { href: "/blogs", label: "Blogs" },
         { href: "/certifications", label: "Certifications" },
