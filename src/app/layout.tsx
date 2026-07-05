@@ -1,4 +1,5 @@
 import { Content, PageLayout } from "@/components/layouts/page";
+import { AmbientOrbitals } from "@/components/shared/ambient-orbitals";
 import { Footer } from "@/components/shared/footer";
 import { Header } from "@/components/shared/header";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -63,6 +64,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
         <RootProvider>
           <NuqsAdapter>
             <PageLayout>
+              <AmbientOrbitals />
               <Header />
               <Content className="scroll-smooth pt-14">
                 <TooltipProvider>

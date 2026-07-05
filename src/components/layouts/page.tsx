@@ -121,7 +121,7 @@ export function Card({
 }: ComponentPropsWithRef<"div">) {
   return (
     <div
-      className={cn("@container relative border p-6 @lg:p-8", className)}
+      className={cn("@container relative border bg-background p-6 @lg:p-8", className)}
       {...props}
     >
       <DecorIcon position="top-left" />
@@ -152,7 +152,7 @@ export function CardGrid({
       <ul
         role="list"
         className={cn(
-          "grid",
+          "grid bg-background",
           "border-t border-l border-border",
           "[&>li]:border-r [&>li]:border-b [&>li]:border-border",
           cols,

@@ -56,7 +56,7 @@ export function Education() {
       <div className="w-full flex flex-col">
         {education.flatMap((edu, i) => {
           const box = (
-            <div key={edu.institution} className="relative border border-border px-6">
+            <div key={edu.institution} className="relative border border-border bg-background px-6">
               <DecorIcon position="top-left" />
               <DecorIcon position="top-right" />
               <DecorIcon position="bottom-left" />

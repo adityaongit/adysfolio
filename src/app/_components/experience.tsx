@@ -36,7 +36,7 @@ export function Experience() {
           const box = (
             <div
               key={exp.url}
-              className="relative border border-border px-6 group transition-colors hover:bg-muted/30"
+              className="relative border border-border bg-background px-6 group transition-colors hover:bg-muted/30"
             >
               <DecorIcon position="top-left" />
               <DecorIcon position="top-right" />

@@ -52,7 +52,7 @@ function Body({
           r={r}
           fill={accent ? undefined : "currentColor"}
           className={accent ? "fill-(--selection-bg)" : undefined}
-          opacity={accent ? 0.85 : opacity}
+          opacity={accent ? 0.55 : opacity}
         />
         {ringed && (
           <ellipse
@@ -85,9 +85,9 @@ export function OrbitalDecor({ className, variant = "full" }: OrbitalDecorProps)
       <circle
         cx="200"
         cy="200"
-        r="5"
+        r="4"
         className="fill-(--selection-bg)"
-        opacity="0.9"
+        opacity="0.55"
       />
 
       {variant === "full" && (
