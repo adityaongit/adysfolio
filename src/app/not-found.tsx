@@ -9,23 +9,17 @@ import {
   TypographyMark,
 } from "@/components/ui/typography";
 import Link from "next/link";
-import { useRef } from "react";
-import { BouncingLogos } from "@/components/shared/bouncing-logo";
+import { Starfield } from "@/components/shared/starfield";
 import { FlickerText } from "@/components/shared/flicker-text";
 
 export default function NotFound() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   return (
     <div
-      ref={containerRef}
       role="main"
       aria-label="Page not found"
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden pt-14"
     >
-      <div aria-hidden="true">
-        <BouncingLogos containerRef={containerRef} opacity="opacity-[0.12]" />
-      </div>
+      <Starfield />
 
       <Empty
         className="relative z-10 flex-none border-0"

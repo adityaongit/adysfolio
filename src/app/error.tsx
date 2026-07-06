@@ -9,8 +9,7 @@ import {
   TypographyMark,
 } from "@/components/ui/typography";
 import Link from "next/link";
-import { useRef } from "react";
-import { BouncingLogos } from "@/components/shared/bouncing-logo";
+import { Starfield } from "@/components/shared/starfield";
 import { FlickerText } from "@/components/shared/flicker-text";
 
 interface ErrorProps {
@@ -18,18 +17,13 @@ interface ErrorProps {
 }
 
 export default function ErrorPage({ reset }: ErrorProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   return (
     <div
-      ref={containerRef}
       role="main"
       aria-label="Error page"
       className="relative flex min-h-screen flex-col items-center justify-center gap-6 overflow-hidden"
     >
-      <div aria-hidden="true">
-        <BouncingLogos containerRef={containerRef} />
-      </div>
+      <Starfield />
 
       <Empty
         className="z-10 backdrop-blur-sm"

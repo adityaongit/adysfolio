@@ -53,7 +53,7 @@ function FlickerChar({
           </g>
         </g>
       ) : (
-        <text className="flicker-n" x={x} y="88">
+        <text className="flicker-n" x={x} y="88" textAnchor="middle">
           {char}
         </text>
       )}
@@ -159,7 +159,7 @@ export function FlickerText({
           <FlickerChar
             key={i}
             char={char}
-            x={x}
+            x={x + charWidth / 2}
             dur={preset.dur}
             values={preset.values}
             keyTimes={preset.keyTimes}
