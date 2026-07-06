@@ -1,4 +1,3 @@
-import { AccentToggle } from "@/components/shared/accent-toggle";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { DecorIcon, FullWidthDivider } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,7 @@ export function Footer() {
             {/* Left: Name + Statement */}
             <div className="flex flex-col gap-3 md:order-1">
               <div className="flex items-center gap-2">
-                <div className="h-px w-8 bg-purple-500/50" aria-hidden="true" />
+                <div className="h-px w-8 bg-(--selection-bg)/60" aria-hidden="true" />
                 <span className="text-sm font-mono uppercase tracking-widest text-muted-foreground">
                   Portfolio
                 </span>
@@ -80,7 +79,7 @@ export function Footer() {
                     asChild
                     size="icon"
                     variant="outline"
-                    className="h-9 w-9 border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all"
+                    className="h-9 w-9 border-(--selection-bg)/20 hover:bg-(--selection-bg)/10 hover:border-(--selection-bg)/40 transition-all"
                   >
                     <a
                       href={item.href}
@@ -93,10 +92,10 @@ export function Footer() {
                   </Button>
                 ))}
               </nav>
-              <div className="flex items-center gap-2 md:self-end">
-                <AccentToggle aria-label="Accent color" />
-                <ThemeToggle aria-label="Toggle theme" />
-              </div>
+              <ThemeToggle
+                aria-label="Toggle theme"
+                className="md:self-end"
+              />
             </div>
           </div>
 
@@ -113,9 +112,9 @@ export function Footer() {
             <div className="flex items-center gap-3 sm:ml-auto" aria-hidden="true">
               <div className="h-px w-12 bg-border/40" />
               <div className="flex gap-1">
-                <div className="w-1 h-1 rounded-full bg-purple-500/30" />
-                <div className="w-1 h-1 rounded-full bg-purple-500/20" />
-                <div className="w-1 h-1 rounded-full bg-purple-500/10" />
+                <div className="w-1 h-1 rounded-full bg-(--selection-bg)/60" />
+                <div className="w-1 h-1 rounded-full bg-(--selection-bg)/35" />
+                <div className="w-1 h-1 rounded-full bg-(--selection-bg)/15" />
               </div>
             </div>
           </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { AccentToggle } from "@/components/shared/accent-toggle";
 import { Logo } from "@/components/shared/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { DecorIcon } from "@/components/ui/border";
@@ -78,7 +77,6 @@ export function Header() {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <AccentToggle className="max-md:hidden" />
           <ThemeToggle className="max-md:hidden" />
 
           <div className="md:hidden">
@@ -122,15 +120,6 @@ export function Header() {
                       Theme
                     </TypographySmall>
                     <ThemeToggle aria-labelledby="theme-label" />
-                  </div>
-                  <div className="flex items-center justify-between px-6 py-3.5">
-                    <TypographySmall
-                      className="text-foreground"
-                      id="accent-label"
-                    >
-                      Accent
-                    </TypographySmall>
-                    <AccentToggle aria-labelledby="accent-label" />
                   </div>
                 </nav>
               </PopoverContent>
