@@ -143,6 +143,12 @@ export const PdfViewer = forwardRef<HTMLDivElement, PdfViewerProps>(
           <div
             ref={setContainerRef}
             className="relative flex-1 overflow-auto bg-muted/10"
+            style={{
+              // One A4 page of reserved height — the area is otherwise empty (and clips the loader) until canvases render.
+              minHeight: pageWidth
+                ? Math.round(pageWidth * Math.SQRT2) + 32
+                : "60vh",
+            }}
           >
             {workerReady && pageWidth && (
               <Document
