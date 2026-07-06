@@ -61,11 +61,7 @@ export default function ResumePage() {
           downloadName={downloadFilename}
           aria-label={`Resume PDF: ${filename}`}
           loader={
-            <div
-              className="flex h-full items-center justify-center"
-              role="status"
-              aria-label="Loading resume"
-            >
+            <div role="status" aria-label="Loading resume">
               <OrbitalLoader aria-hidden="true" />
             </div>
           }

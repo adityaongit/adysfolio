@@ -132,8 +132,9 @@ export const PdfViewer = forwardRef<HTMLDivElement, PdfViewerProps>(
       >
         <div
           ref={ref}
+          // Any overflow ancestor would become the loader's scroll container and freeze its sticky positioning.
           className={cn(
-            "relative flex h-full flex-col overflow-hidden border border-border",
+            "relative flex h-full flex-col border border-border",
             className,
           )}
           {...props}
@@ -141,8 +142,7 @@ export const PdfViewer = forwardRef<HTMLDivElement, PdfViewerProps>(
           {toolbar}
 
           <div
-            ref={setContainerRef}
-            className="relative flex-1 overflow-auto bg-muted/10"
+            className="relative flex flex-1 flex-col"
             style={{
               // One A4 page of reserved height — the area is otherwise empty (and clips the loader) until canvases render.
               minHeight: pageWidth
@@ -150,38 +150,48 @@ export const PdfViewer = forwardRef<HTMLDivElement, PdfViewerProps>(
                 : "60vh",
             }}
           >
-            {workerReady && pageWidth && (
-              <Document
-                key={docKey}
-                file={file}
-                loading={null}
-                onLoadSuccess={({ numPages }) => {
-                  setNumPages(numPages);
-                  setLoading(false);
-                }}
-                onLoadError={() => setLoading(false)}
-                className="flex flex-col items-center gap-4 py-4"
-              >
-                {Array.from({ length: numPages ?? 0 }, (_, i) => (
-                  <Page
-                    key={i + 1}
-                    pageNumber={i + 1}
-                    width={pageWidth - 2}
-                    scale={zoom}
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                  />
-                ))}
-              </Document>
-            )}
+            <div
+              ref={setContainerRef}
+              className="flex-1 overflow-auto bg-muted/10"
+            >
+              {workerReady && pageWidth && (
+                <Document
+                  key={docKey}
+                  file={file}
+                  loading={null}
+                  onLoadSuccess={({ numPages }) => {
+                    setNumPages(numPages);
+                    setLoading(false);
+                  }}
+                  onLoadError={() => setLoading(false)}
+                  className="flex flex-col items-center gap-4 py-4"
+                >
+                  {Array.from({ length: numPages ?? 0 }, (_, i) => (
+                    <Page
+                      key={i + 1}
+                      pageNumber={i + 1}
+                      width={pageWidth - 2}
+                      scale={zoom}
+                      renderTextLayer={false}
+                      renderAnnotationLayer={false}
+                    />
+                  ))}
+                </Document>
+              )}
+            </div>
 
             {(loading || !workerReady) && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-                {loader ?? (
-                  <div className="text-sm text-muted-foreground">
-                    Loading document...
-                  </div>
-                )}
+              <div className="absolute inset-0 bg-background/60 backdrop-blur-sm">
+                <div
+                  className="sticky flex justify-center"
+                  style={{ top: "calc(50vh - 32px)" }}
+                >
+                  {loader ?? (
+                    <div className="text-sm text-muted-foreground">
+                      Loading document...
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
