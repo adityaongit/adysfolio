@@ -62,6 +62,9 @@ export function Experience() {
                     <TypographyMuted className="text-sm font-normal">
                       {exp.data.role}
                     </TypographyMuted>
+                    <TypographySmall className="sm:hidden font-mono text-xs tabular-nums text-muted-foreground">
+                      {exp.data.period}
+                    </TypographySmall>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 shrink-0">
