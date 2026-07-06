@@ -398,6 +398,151 @@ main {
   opacity: 0.6;
 }
 
+@keyframes buddy-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes buddy-bob-up {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes buddy-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes buddy-blink {
+  0%,
+  90%,
+  96%,
+  100% {
+    transform: scaleY(1);
+  }
+  93% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes buddy-wiggle {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes buddy-z {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translate(7px, -14px);
+  }
+}
+
+@keyframes buddy-heart {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.7);
+  }
+  25% {
+    opacity: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translateY(-13px) scale(1.05);
+  }
+}
+
+.buddy-bob {
+  animation: buddy-bob 1.6s ease-in-out infinite;
+}
+
+.buddy-bob-up {
+  animation: buddy-bob-up 1.6s ease-in-out infinite;
+}
+
+.buddy-float {
+  animation: buddy-float 4.5s ease-in-out infinite;
+}
+
+.buddy-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: buddy-blink 5s infinite;
+}
+
+.buddy-z text {
+  opacity: 0;
+  animation: buddy-z 3.6s ease-out infinite;
+}
+
+.buddy-z text:nth-child(2) {
+  animation-delay: 1.2s;
+}
+
+.buddy-z text:nth-child(3) {
+  animation-delay: 2.4s;
+}
+
+.orbit-buddy:hover .buddy-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: buddy-wiggle 1.8s ease-in-out infinite;
+}
+
+.orbit-buddy .buddy-eyes-happy {
+  opacity: 0;
+}
+
+.orbit-buddy:hover .buddy-eyes-happy {
+  opacity: 1;
+}
+
+.orbit-buddy:hover .buddy-eyes-normal {
+  opacity: 0;
+}
+
+.orbit-buddy .buddy-hearts path {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.orbit-buddy:hover .buddy-hearts path {
+  animation: buddy-heart 2.6s ease-out infinite;
+}
+
+.orbit-buddy:hover .buddy-hearts path:nth-child(2) {
+  animation-delay: 1.3s;
+}
+
 .orbit-group {
   transform-box: view-box;
   transform-origin: center;
@@ -414,5 +559,20 @@ main {
   }
   .meteor {
     display: none;
+  }
+  .buddy-bob,
+  .buddy-bob-up,
+  .buddy-float,
+  .buddy-blink,
+  .buddy-z text,
+  .orbit-buddy:hover .buddy-ring,
+  .orbit-buddy:hover .buddy-hearts path {
+    animation: none;
+  }
+  .buddy-z text {
+    opacity: 0.6;
+  }
+  .orbit-buddy:hover .buddy-hearts path:first-child {
+    opacity: 0.8;
   }
 }

@@ -4,6 +4,7 @@ import { Footer } from "@/components/shared/footer";
 import { Header } from "@/components/shared/header";
 import { JsonLd } from "@/components/shared/json-ld";
 import { MouseGlow } from "@/components/shared/mouse-glow";
+import { OrbitBuddy } from "@/components/shared/orbit-buddy";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { accentInitScript } from "@/lib/accent";
@@ -77,6 +78,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
           </NuqsAdapter>
         </RootProvider>
         <MouseGlow />
+        <OrbitBuddy />
       </body>
     </html>
   );
