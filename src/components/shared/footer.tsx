@@ -15,7 +15,10 @@ const footerNav = [
 
 export function Footer() {
   return (
-    <footer className="relative mt-auto" aria-label="Site footer">
+    <footer
+      className="relative z-10 mt-auto border-t border-border bg-background"
+      aria-label="Site footer"
+    >
       <div className="relative mx-auto max-w-5xl px-6 sm:px-8 lg:px-10">
         {/* Corner accents */}
         <div className="absolute -top-px left-0 w-px h-4 bg-border" aria-hidden="true" />
