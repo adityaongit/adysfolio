@@ -11,13 +11,12 @@ export interface LogoProps extends SVGProps<SVGSVGElement> {
   copyOnClick?: boolean;
 }
 
-const ICON_CENTER = 32;
 const FONT_SIZE = 46;
-const TEXT_X = ICON_CENTER + 18;
+const TEXT_X = 68;
 const TEXT_Y = 57;
 const VB_HEIGHT = 64;
 const PADDING = 4;
-const CONTENT_LEFT = 16;
+const CONTENT_LEFT = 6;
 const CHAR_W = 0.52;
 
 export const Logo = forwardRef<SVGSVGElement, LogoProps>(
@@ -100,12 +99,25 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
         {...props}
       >
         {!isHidden && <title>{ariaLabel ?? defaultLabel}</title>}
-        <polygon
-          points="32,4 48,60 40.5,60 32,14 23.5,60 16,60"
-          className="fill-current"
+        <path
+          d="M32 8 L16 58 M32 8 L48 58"
+          className="stroke-current"
+          strokeWidth="6"
+          strokeLinecap="round"
         />
-        <rect x="18" y="36" width="11" height="5" rx="2.5" className="fill-current" />
-        <rect x="35" y="36" width="11" height="5" rx="2.5" className="fill-current" />
+        <circle cx="32" cy="8" r="5.5" className="fill-current" />
+        <ellipse
+          cx="32"
+          cy="36"
+          rx="26"
+          ry="9"
+          transform="rotate(-14 32 36)"
+          className="stroke-current"
+          strokeWidth="2"
+          strokeDasharray="2.5 3.5"
+          opacity="0.75"
+        />
+        <circle cx="57.2" cy="29.7" r="4" className="fill-(--selection-bg)" />
         <text
           ref={textRef}
           x={TEXT_X}

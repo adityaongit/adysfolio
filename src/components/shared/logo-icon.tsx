@@ -1,30 +1,28 @@
 import { cn } from "@/lib/cn";
 import { forwardRef, type SVGProps } from "react";
 
-const VB_HEIGHT = 64;
-const CROP_LEFT = 12;
-const CROP_RIGHT = 52;
-const VB_W = CROP_RIGHT - CROP_LEFT;
-
 interface LogoIconProps extends SVGProps<SVGSVGElement> {
   size?: number;
   color?: string;
 }
 
+/**
+ * The "A" drawn as an orbital diagram: two trajectory legs meeting at a
+ * planet apex, crossbar formed by a dashed orbit ring carrying the accent
+ * planet. Geometry mirrored in favicon.svg and the OG mark.
+ */
 export const LogoIcon = forwardRef<SVGSVGElement, LogoIconProps>(
   (
     { size = 64, color = "currentColor", className, onClick, ...props },
     ref,
   ) => {
-    const scaledWidth = Math.round((VB_W / VB_HEIGHT) * size);
-
     return (
       <svg
         ref={ref}
         role="img"
         aria-label="Aditya Jindal logo"
-        viewBox={`${CROP_LEFT} 0 ${VB_W} ${VB_HEIGHT}`}
-        width={scaledWidth}
+        viewBox="0 0 64 64"
+        width={size}
         height={size}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -37,9 +35,25 @@ export const LogoIcon = forwardRef<SVGSVGElement, LogoIconProps>(
         {...props}
       >
         <title>Aditya Jindal</title>
-        <polygon points="32,4 48,60 40.5,60 32,14 23.5,60 16,60" fill={color} />
-        <rect x="18" y="36" width="11" height="5" rx="2.5" fill={color} />
-        <rect x="35" y="36" width="11" height="5" rx="2.5" fill={color} />
+        <path
+          d="M32 8 L16 58 M32 8 L48 58"
+          stroke={color}
+          strokeWidth="6"
+          strokeLinecap="round"
+        />
+        <circle cx="32" cy="8" r="5.5" fill={color} />
+        <ellipse
+          cx="32"
+          cy="36"
+          rx="26"
+          ry="9"
+          transform="rotate(-14 32 36)"
+          stroke={color}
+          strokeWidth="2"
+          strokeDasharray="2.5 3.5"
+          opacity="0.75"
+        />
+        <circle cx="57.2" cy="29.7" r="4" className="fill-(--selection-bg)" />
       </svg>
     );
   },

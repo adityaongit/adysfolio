@@ -1,6 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 64 64" width="64" height="64" fill="none" aria-hidden="true" style="background:none;"><title>Aditya Jindal</title><style>
-    .logo { fill: #000000; }
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .ink { stroke: #18181b; }
+    .dot { fill: #18181b; }
     @media (prefers-color-scheme: dark) {
-      .logo { fill: #ffffff; }
+      .ink { stroke: #fafafa; }
+      .dot { fill: #fafafa; }
     }
-  </style><polygon class="logo" points="32,4 48,60 40.5,60 32,14 23.5,60 16,60"></polygon><rect class="logo" x="18" y="36" width="11" height="5" rx="2.5"></rect><rect class="logo" x="35" y="36" width="11" height="5" rx="2.5"></rect></svg>
+  </style>
+  <path class="ink" d="M32 8 L16 58 M32 8 L48 58" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <circle class="dot" cx="32" cy="8" r="5.5"/>
+  <ellipse class="ink" cx="32" cy="36" rx="26" ry="9" transform="rotate(-14 32 36)" stroke-width="2.5" stroke-dasharray="3.5 3" fill="none" opacity="0.75"/>
+  <circle cx="57.2" cy="29.7" r="4.5" fill="#43CA80"/>
+</svg>
