@@ -60,6 +60,14 @@ export default function Layout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="relative flex flex-col min-h-screen">
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            src="/stats/script.js"
+            data-website-id="0d1b8f7f-10f7-4d13-913c-013ed24c08a4"
+            data-host-url="/stats"
+            strategy="afterInteractive"
+          />
+        )}
         <JsonLd type="person" />
         <JsonLd type="website" />
         <RootProvider>

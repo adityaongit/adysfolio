@@ -25,11 +25,11 @@ const config = {
     return [
       {
         source: "/stats/script.js",
-        destination: "https://cloud.umami.is/script.js",
+        destination: "https://umami.portlabs.in/script.js",
       },
       {
         source: "/stats/api/send",
-        destination: "https://cloud.umami.is/api/send",
+        destination: "https://umami.portlabs.in/api/send",
       },
     ];
   },

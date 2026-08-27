@@ -97,16 +97,9 @@ export default function PrivacyPolicyPage() {
               Umami Analytics
             </a>{" "}
             — a <TypographyMark>privacy-focused, open-source</TypographyMark>{" "}
-            analytics tool hosted on{" "}
-            <a
-              href="https://umami.is/docs/cloud"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-4 hover:text-foreground transition-colors"
-            >
-              Umami Cloud
-            </a>
-            . Umami does <TypographyMark>not use cookies</TypographyMark>, does
+            analytics tool <TypographyMark>self-hosted</TypographyMark> on
+            infrastructure I control, so analytics data never leaves my own
+            server. Umami does <TypographyMark>not use cookies</TypographyMark>, does
             not collect personal data, and complies with{" "}
             <TypographyMark>GDPR, CCPA, and PECR</TypographyMark>. Only
             anonymized, aggregated page view data is recorded — no IP addresses,
